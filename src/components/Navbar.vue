@@ -12,7 +12,7 @@
           :alt="siteConfig.authorName"
           class="w-9 h-9 rounded-full object-cover shadow-md group-hover:rotate-[360deg] transition-transform duration-700"
         />
-        <span class="text-base font-black text-black dark:text-white tracking-wider">
+        <span class="text-base font-black text-[#000] tracking-wider">
           {{ siteConfig.navTitle }}
           <span class="text-(--primary)">{{ siteConfig.navSuffix }}</span>
           {{ siteConfig.navAfter }}
@@ -24,7 +24,7 @@
         <!-- Home link: no persistent active background -->
         <RouterLink
           to="/"
-          class="px-3 py-1.5 rounded-lg text-sm font-bold transition-all duration-150 text-black dark:text-white hover:bg-(--primary) hover:text-white"
+          class="px-3 py-1.5 rounded-lg text-[0.925rem] font-bold transition-all duration-150 text-[#000] hover:bg-(--primary) hover:text-white"
         >
           首页
         </RouterLink>
@@ -33,7 +33,7 @@
           v-for="link in otherNavLinks"
           :key="link.path"
           :to="link.path"
-          class="px-3 py-1.5 rounded-lg text-sm font-bold transition-all duration-150 text-black dark:text-white hover:bg-(--primary) hover:text-white router-link-exact-active:bg-(--primary) router-link-exact-active:text-white"
+          class="px-3 py-1.5 rounded-lg text-[0.925rem] font-bold transition-all duration-150 text-[#000] hover:bg-(--primary) hover:text-white router-link-exact-active:bg-(--primary) router-link-exact-active:text-white"
         >
           {{ link.label }}
         </RouterLink>
@@ -78,7 +78,7 @@
           :alt="siteConfig.authorName"
           class="w-8 h-8 rounded-full object-cover shadow-md"
         />
-        <span class="text-sm font-black text-black dark:text-white tracking-wider">
+        <span class="text-sm font-black text-[#000] tracking-wider">
           {{ siteConfig.navTitle }}
           <span class="text-(--primary)">{{ siteConfig.navSuffix }}</span>
           {{ siteConfig.navAfter }}
@@ -121,7 +121,7 @@
         <RouterLink
           to="/"
           @click="isMobileMenuOpen = false"
-          class="block px-6 py-2.5 text-sm font-bold text-black dark:text-white hover:bg-(--primary) hover:text-white transition-colors duration-150"
+          class="block px-6 py-2.5 text-[0.925rem] font-bold text-[#000] hover:bg-(--primary) hover:text-white transition-colors duration-150"
         >
           首页
         </RouterLink>
@@ -130,7 +130,7 @@
           :key="link.path"
           :to="link.path"
           @click="isMobileMenuOpen = false"
-          class="block px-6 py-2.5 text-sm font-bold text-black dark:text-white hover:bg-(--primary) hover:text-white router-link-exact-active:bg-(--primary) router-link-exact-active:text-white transition-colors duration-150"
+          class="block px-6 py-2.5 text-[0.925rem] font-bold text-[#000] hover:bg-(--primary) hover:text-white router-link-exact-active:bg-(--primary) router-link-exact-active:text-white transition-colors duration-150"
         >
           {{ link.label }}
         </RouterLink>
