@@ -3,10 +3,13 @@
     <BackButton />
 
     <div class="mt-8">
-      <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-2">项目</h1>
-      <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">共 {{ projectsData.length }} 个项目</p>
-
-      <div class="max-w-sm mb-6"><SearchBar /></div>
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+        <div>
+          <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">项目</h1>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">共 {{ projectsData.length }} 个项目</p>
+        </div>
+        <div class="max-w-sm mt-3 sm:mt-0 sm:ml-4 shrink-0"><SearchBar /></div>
+      </div>
 
       <!-- Tags row -->
       <div v-if="tags.length > 0" class="flex flex-wrap gap-2 mb-4">

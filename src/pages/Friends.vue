@@ -3,9 +3,10 @@
     <BackButton />
 
     <div class="mt-8">
-      <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-8 text-center">友情链接</h1>
-
-      <div class="max-w-sm mx-auto mb-6"><SearchBar /></div>
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+        <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">友情链接</h1>
+        <div class="max-w-sm mt-3 sm:mt-0 sm:ml-4 shrink-0"><SearchBar /></div>
+      </div>
 
       <!-- Apply card -->
       <div class="mb-8 p-6 rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl">

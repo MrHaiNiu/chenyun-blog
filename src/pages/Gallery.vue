@@ -3,10 +3,15 @@
     <BackButton />
 
     <div class="mt-8">
-      <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-2">相册</h1>
-      <p class="text-sm text-slate-500 dark:text-slate-400 mb-8">共 {{ albums.length }} 个相册</p>
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+        <div>
+          <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">相册</h1>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">共 {{ albums.length }} 个相册</p>
+        </div>
+        <div class="max-w-sm mt-3 sm:mt-0 sm:ml-4 shrink-0"><SearchBar /></div>
+      </div>
 
-      <div class="max-w-sm mb-6"><SearchBar /></div>
+
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
         <div

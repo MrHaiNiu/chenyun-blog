@@ -3,10 +3,13 @@
     <BackButton />
 
     <div class="mt-8">
-      <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-2">音乐</h1>
-      <p class="text-sm text-slate-500 dark:text-slate-400 mb-8">放松一下，听听歌吧</p>
-
-      <div class="max-w-sm mb-6"><SearchBar /></div>
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+        <div>
+          <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">音乐</h1>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">放松一下，听听歌吧</p>
+        </div>
+        <div class="max-w-sm mt-3 sm:mt-0 sm:ml-4 shrink-0"><SearchBar /></div>
+      </div>
 
       <div class="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-6 md:p-10">
         <div class="text-center py-12">
