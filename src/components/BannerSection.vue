@@ -25,7 +25,7 @@
     <!-- Banner title -->
     <div class="relative z-10 text-center px-4 mb-4">
       <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-white drop-shadow-lg mb-2 lg:mb-4 tracking-wider">
-        XingHuiSama
+        Chenyun
       </h1>
       <p class="text-lg md:text-2xl text-white/90 drop-shadow-md font-serif tracking-widest">
         の 宝藏之地
@@ -116,7 +116,7 @@ const quotes = [
   { text: '万物皆可模拟，只是精度不同罢了。', author: '—— 计算化学' },
   { text: 'Stay hungry, Stay foolish. ', author: '—— Steve Jobs' },
   { text: '每一个 bug 都是成长的契机。', author: '—— 程序员哲学' },
-  { text: '在代码与学术间穿梭，在理性与浪漫间游走。', author: '—— XingHuiSama' },
+  { text: '在代码与学术间穿梭，在理性与浪漫间游走。', author: '—— Chenyun' },
   { text: '模拟不是万能的，但没有模拟是万万不能的。', author: '—— 分子动力学' },
   { text: '最好的代码，是没有代码。', author: '—— 极简主义' },
   { text: 'Hello World! ', author: '—— 一切的开始' },

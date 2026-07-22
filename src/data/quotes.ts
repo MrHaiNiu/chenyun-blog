@@ -6,7 +6,7 @@ export interface Quote {
 export const quotes: Quote[] = [
   { text: '代码是写给人看的，只是恰好机器也能执行。', author: '架构格言' },
   { text: '愿你历尽千帆，归来仍是少年。', author: '古语' },
-  { text: '在代码与学术间穿梭，于分子与数据中寻觅。', author: 'XingHuiSama' },
+  { text: '在代码与学术间穿梭，于分子与数据中寻觅。', author: 'Chenyun' },
   { text: '每一个 bug 都是成长的契机，每一次编译都是新的开始。', author: '编程哲思' },
   { text: '科研之路漫漫，吾将上下而求索。', author: '屈原《离骚》改编' },
   { text: '分子动力学模拟的不确定性正如人生，你永远不知道下一个构象会是什么样。', author: '科研感悟' },

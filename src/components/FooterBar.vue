@@ -3,7 +3,7 @@
     <div class="max-w-4xl mx-auto px-4 flex flex-col items-center justify-center gap-2">
       <!-- Copyright with rotating logo -->
       <div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-        <span>© 2026 XingHuiSama Sr.</span>
+        <span>© 2026 Chenyun Sr.</span>
         <img
           src="/logo.png"
           alt="logo"

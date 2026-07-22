@@ -1,6 +1,6 @@
 <template>
   <header
-    class="fixed top-0 left-0 right-0 z-[1000] transition-all duration-300 bg-white dark:bg-neutral-900 border-b border-black/5 dark:border-white/5"
+    class="fixed top-0 left-0 right-0 z-[1000] transition-all duration-300"
     :class="{ '-translate-y-full': !showNav }"
   >
     <!-- Desktop Navbar -->
@@ -10,7 +10,7 @@
         <img
           :src="siteConfig.avatarUrl"
           :alt="siteConfig.authorName"
-          class="w-9 h-9 rounded-full object-cover border-2 border-black/10 dark:border-white/20 shadow-lg group-hover:rotate-[360deg] transition-transform duration-700"
+          class="w-9 h-9 rounded-full object-cover shadow-md group-hover:rotate-[360deg] transition-transform duration-700"
         />
         <span class="text-base font-black text-black/80 dark:text-white/80 tracking-wider">
           {{ siteConfig.navTitle }}
@@ -25,7 +25,7 @@
           v-for="link in navLinks"
           :key="link.path"
           :to="link.path"
-          class="px-3 py-1.5 rounded-lg text-sm font-bold transition-all duration-150 text-black/75 dark:text-white/75 hover:text-(--primary) hover:bg-(--btn-plain-bg-hover)"
+          class="px-3 py-1.5 rounded-lg text-sm font-bold transition-all duration-150 text-black/75 dark:text-white/75 hover:text-(--primary) hover:bg-(--btn-plain-bg-hover) router-link-exact-active:text-(--primary) router-link-exact-active:bg-(--btn-plain-bg-hover)"
         >
           {{ link.label }}
         </RouterLink>
@@ -70,7 +70,7 @@
         <img
           :src="siteConfig.avatarUrl"
           :alt="siteConfig.authorName"
-          class="w-8 h-8 rounded-full object-cover border-2 border-black/10 dark:border-white/20 shadow-lg"
+          class="w-8 h-8 rounded-full object-cover shadow-md"
         />
         <span class="text-sm font-black text-black/80 dark:text-white/80 tracking-wider">
           {{ siteConfig.navTitle }}
@@ -111,13 +111,13 @@
 
     <!-- Mobile menu -->
     <Transition name="mobile-menu">
-      <div v-if="isMobileMenuOpen" class="md:hidden bg-white dark:bg-neutral-900 border-t border-black/5 dark:border-white/5">
+      <div v-if="isMobileMenuOpen" class="md:hidden border-t border-black/5 dark:border-white/5">
         <RouterLink
           v-for="link in navLinks"
           :key="link.path"
           :to="link.path"
           @click="isMobileMenuOpen = false"
-          class="block px-6 py-2.5 text-sm font-bold text-black/60 dark:text-white/60 hover:text-(--primary) hover:bg-(--btn-plain-bg-hover) transition-colors duration-150"
+          class="block px-6 py-2.5 text-sm font-bold text-black/60 dark:text-white/60 hover:text-(--primary) hover:bg-(--btn-plain-bg-hover) router-link-exact-active:text-(--primary) router-link-exact-active:bg-(--btn-plain-bg-hover) transition-colors duration-150"
         >
           {{ link.label }}
         </RouterLink>
