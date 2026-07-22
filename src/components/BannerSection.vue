@@ -4,17 +4,19 @@
     class="relative w-full overflow-hidden flex flex-col items-center justify-center"
     :style="{ height: `${themeStore.bannerHeight}vh`, minHeight: '350px' }"
   >
-    <!-- Banner background images -->
-    <div class="absolute inset-0 z-0">
+    <!-- Banner background images with Ken Burns zoom -->
+    <div class="absolute inset-0 z-0 overflow-hidden">
       <Transition name="banner-fade">
-        <img
-          :key="currentBgIndex"
-          :src="bgImages[currentBgIndex]"
-          alt="banner"
-          class="w-full h-full object-cover"
-        />
+        <div :key="currentBgIndex" class="w-full h-full banner-zoom">
+          <img
+            :src="bgImages[currentBgIndex]"
+            alt="banner"
+            class="w-full h-full object-cover"
+          />
+        </div>
       </Transition>
-      <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/50" />
+      <!-- Gradient overlay: darker at edges for text readability -->
+      <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/40" />
     </div>
 
     <!-- Search bar (above the title) -->
@@ -221,5 +223,15 @@ onUnmounted(() => {
 .quote-fade-enter-from,
 .quote-fade-leave-to {
   opacity: 0;
+}
+
+/* Ken Burns zoom effect — matches carousel interval (8s) */
+@keyframes bannerZoom {
+  0%   { transform: scale(1.03); }
+  100% { transform: scale(1.13); }
+}
+.banner-zoom {
+  animation: bannerZoom 8s ease-out forwards;
+  will-change: transform;
 }
 </style>
