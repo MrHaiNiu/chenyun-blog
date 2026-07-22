@@ -1,7 +1,12 @@
 <template>
   <header
-    class="fixed top-0 left-0 right-0 z-[1000] transition-transform duration-300"
-    :class="{ '-translate-y-full': !showNav }"
+    class="fixed top-0 left-0 right-0 z-[1000] transition-all duration-300"
+    :class="[
+      { '-translate-y-full': !showNav },
+      themeStore.navbarBlur
+        ? 'backdrop-blur-2xl bg-white/70 dark:bg-black/60'
+        : 'bg-slate-900/95 dark:bg-slate-950/95'
+    ]"
   >
     <!-- Desktop Navbar -->
     <nav class="hidden md:flex items-center justify-between px-6 py-2.5">
@@ -27,7 +32,7 @@
           :to="link.path"
           class="px-3 py-1.5 rounded-lg text-sm font-bold transition-all duration-200"
           :class="isActive(link.path)
-            ? 'text-white bg-white/20 shadow-sm'
+            ? 'text-white bg-(--primary) shadow-sm'
             : 'text-white/70 hover:text-white hover:bg-white/10'"
         >
           {{ link.label }}
@@ -38,7 +43,8 @@
       <div class="flex items-center gap-1 flex-shrink-0">
         <!-- Settings button -->
         <button
-          @click="isSettingsOpen = true"
+          id="settings-btn"
+          @click="isSettingsOpen = !isSettingsOpen"
           class="w-9 h-9 rounded-lg flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition-all duration-200"
           title="设置"
         >
@@ -83,7 +89,8 @@
 
       <div class="flex items-center gap-1">
         <button
-          @click="isSettingsOpen = true"
+          id="settings-btn"
+          @click="isSettingsOpen = !isSettingsOpen"
           class="w-8 h-8 rounded-lg flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition-all duration-200"
         >
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

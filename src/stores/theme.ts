@@ -17,6 +17,8 @@ export const useThemeStore = defineStore('theme', () => {
   const enableCardBorder = ref(true)
   // Layout: full / sidebar
   const layoutMode = ref<'sidebar' | 'full'>('sidebar')
+  // Navbar glass blur
+  const navbarBlur = ref(true)
   // Wallpaper (custom bg image)
   const wallpaperUrl = ref<string>('')
   // Banner enabled
@@ -48,6 +50,9 @@ export const useThemeStore = defineStore('theme', () => {
 
     const savedBanner = localStorage.getItem('blog-banner-enabled')
     if (savedBanner !== null) bannerEnabled.value = savedBanner === 'true'
+
+    const savedNavbarBlur = localStorage.getItem('blog-navbar-blur')
+    if (savedNavbarBlur !== null) navbarBlur.value = savedNavbarBlur === 'true'
 
     applyTheme()
     applySettings()
@@ -129,6 +134,11 @@ export const useThemeStore = defineStore('theme', () => {
     applySettings()
   }
 
+  function setNavbarBlur(enabled: boolean) {
+    navbarBlur.value = enabled
+    localStorage.setItem('blog-navbar-blur', `${enabled}`)
+  }
+
   function resetSettings() {
     themeHue.value = 240
     pageWidth.value = 75
@@ -144,6 +154,8 @@ export const useThemeStore = defineStore('theme', () => {
     localStorage.removeItem('blog-layout')
     localStorage.removeItem('blog-wallpaper')
     localStorage.removeItem('blog-banner-enabled')
+    localStorage.removeItem('blog-navbar-blur')
+    navbarBlur.value = true
     applySettings()
   }
 
@@ -153,8 +165,8 @@ export const useThemeStore = defineStore('theme', () => {
 
   return {
     isDark, mounted,
-    themeHue, pageWidth, bannerHeight, cardRadius, layoutMode, wallpaperUrl, bannerEnabled,
+    themeHue, pageWidth, bannerHeight, cardRadius, layoutMode, wallpaperUrl, bannerEnabled, navbarBlur,
     init, toggleTheme, applySettings,
-    setHue, setPageWidth, setBannerHeight, setCardRadius, setLayoutMode, setWallpaper, setBannerEnabled, resetSettings,
+    setHue, setPageWidth, setBannerHeight, setCardRadius, setLayoutMode, setWallpaper, setBannerEnabled, setNavbarBlur, resetSettings,
   }
 })

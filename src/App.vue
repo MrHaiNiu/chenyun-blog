@@ -21,6 +21,7 @@
 
     <!-- Main content -->
     <div class="relative z-10 flex flex-col flex-1">
+      <PageProgressBar />
       <Navbar />
       <router-view v-slot="{ Component }">
         <transition name="fade-slide" mode="out-in">
@@ -51,6 +52,7 @@ import BackgroundSlider from '@/components/BackgroundSlider.vue'
 import BackgroundEffects from '@/components/BackgroundEffects.vue'
 import SplashScreen from '@/components/SplashScreen.vue'
 import Navbar from '@/components/Navbar.vue'
+import PageProgressBar from '@/components/PageProgressBar.vue'
 import FloatingButtons from '@/components/FloatingButtons.vue'
 import { useThemeStore } from '@/stores/theme'
 import { useToastStore } from '@/stores/toast'
