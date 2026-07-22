@@ -6,6 +6,8 @@
       <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-2">归档与探索</h1>
       <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">共 {{ posts.length }} 篇文章</p>
 
+      <div class="max-w-sm mb-6"><SearchBar /></div>
+
       <!-- Tags row -->
       <div v-if="tags.length > 0" class="flex flex-wrap gap-2 mb-4">
         <button
@@ -145,6 +147,7 @@ import { ref, computed } from 'vue'
 import { getAllPosts } from '@/utils/markdown'
 import { siteConfig } from '@/siteConfig'
 import BackButton from '@/components/BackButton.vue'
+import SearchBar from '@/components/SearchBar.vue'
 
 const posts = getAllPosts()
 const selectedTag = ref('')

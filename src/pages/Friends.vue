@@ -5,6 +5,8 @@
     <div class="mt-8">
       <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-8 text-center">友情链接</h1>
 
+      <div class="max-w-sm mx-auto mb-6"><SearchBar /></div>
+
       <!-- Apply card -->
       <div class="mb-8 p-6 rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl">
         <h3 class="text-lg font-black text-slate-900 dark:text-white mb-3">申请友链</h3>
@@ -51,6 +53,7 @@ import { siteConfig } from '@/siteConfig'
 import { friendsData } from '@/data/friends'
 import { useToastStore } from '@/stores/toast'
 import BackButton from '@/components/BackButton.vue'
+import SearchBar from '@/components/SearchBar.vue'
 
 const toastStore = useToastStore()
 

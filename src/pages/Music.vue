@@ -6,6 +6,8 @@
       <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-2">音乐</h1>
       <p class="text-sm text-slate-500 dark:text-slate-400 mb-8">放松一下，听听歌吧</p>
 
+      <div class="max-w-sm mb-6"><SearchBar /></div>
+
       <div class="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-6 md:p-10">
         <div class="text-center py-12">
           <div class="text-5xl mb-4">🎵</div>
@@ -21,4 +23,5 @@
 
 <script setup lang="ts">
 import BackButton from '@/components/BackButton.vue'
+import SearchBar from '@/components/SearchBar.vue'
 </script>

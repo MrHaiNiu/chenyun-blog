@@ -6,6 +6,8 @@
       <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-2">说说</h1>
       <p class="text-sm text-slate-500 dark:text-slate-400 mb-8">共 {{ chatters.length }} 条说说</p>
 
+      <div class="max-w-sm mb-6"><SearchBar /></div>
+
       <div class="space-y-4">
         <div
           v-for="(chatter, i) in chatters"
@@ -40,4 +42,5 @@
 import { chatters } from '@/data/chatters'
 import { siteConfig } from '@/siteConfig'
 import BackButton from '@/components/BackButton.vue'
+import SearchBar from '@/components/SearchBar.vue'
 </script>

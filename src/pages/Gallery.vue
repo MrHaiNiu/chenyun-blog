@@ -6,6 +6,8 @@
       <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-2">相册</h1>
       <p class="text-sm text-slate-500 dark:text-slate-400 mb-8">共 {{ albums.length }} 个相册</p>
 
+      <div class="max-w-sm mb-6"><SearchBar /></div>
+
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
         <div
           v-for="(album, i) in albums"
@@ -74,6 +76,7 @@ import { ref } from 'vue'
 import { albums } from '@/data/albums'
 import type { Album } from '@/types'
 import BackButton from '@/components/BackButton.vue'
+import SearchBar from '@/components/SearchBar.vue'
 
 const selectedAlbum = ref<Album | null>(null)
 

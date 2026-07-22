@@ -13,6 +13,39 @@ let removeAfterEach: (() => void) | undefined
 let finishTimer: ReturnType<typeof setTimeout> | undefined
 let doneTimer: ReturnType<typeof setTimeout> | undefined
 
+// ===== Scroll-based progress =====
+let ticking = false
+
+function updateScrollProgress() {
+  const scrollTop = window.scrollY
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight
+  const bar = document.getElementById('page-progress-bar')
+  if (!bar) return
+
+  if (docHeight <= 0 || scrollTop <= 0) {
+    // At top — hide bar
+    bar.style.width = '0'
+    bar.classList.remove('loading', 'finishing', 'done')
+    bar.style.opacity = '0'
+    return
+  }
+
+  const percent = Math.min((scrollTop / docHeight) * 100, 100)
+  bar.style.width = percent + '%'
+  bar.style.opacity = '1'
+}
+
+function onScroll() {
+  if (!ticking) {
+    requestAnimationFrame(() => {
+      updateScrollProgress()
+      ticking = false
+    })
+    ticking = true
+  }
+}
+
+// ===== Route-change progress =====
 function clearTimers() {
   if (finishTimer) { clearTimeout(finishTimer); finishTimer = undefined }
   if (doneTimer) { clearTimeout(doneTimer); doneTimer = undefined }
@@ -45,17 +78,24 @@ function handleRouteChangeEnd() {
 }
 
 onMounted(() => {
+  // Route listeners
   removeBeforeEach = router.beforeEach(() => {
     handleRouteChangeStart()
   })
   removeAfterEach = router.afterEach(() => {
     handleRouteChangeEnd()
   })
+
+  // Scroll listener
+  window.addEventListener('scroll', onScroll, { passive: true })
+  // Initial check
+  updateScrollProgress()
 })
 
 onUnmounted(() => {
   clearTimers()
   if (removeBeforeEach) removeBeforeEach()
   if (removeAfterEach) removeAfterEach()
+  window.removeEventListener('scroll', onScroll)
 })
 </script>
