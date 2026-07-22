@@ -17,7 +17,8 @@
         <img
           :src="siteConfig.avatarUrl"
           :alt="siteConfig.authorName"
-          class="relative w-24 h-24 rounded-full object-cover border-4 border-white/60 dark:border-slate-700/60 shadow-lg profile-avatar-float group-hover:rotate-[360deg] transition-transform duration-700"
+          @click.stop="goToAbout"
+          class="relative w-24 h-24 rounded-full object-cover border-4 border-white/60 dark:border-slate-700/60 shadow-lg profile-avatar-float group-hover:rotate-[360deg] transition-transform duration-700 cursor-pointer"
         />
       </div>
 
@@ -83,6 +84,10 @@ const props = defineProps<{
 
 const router = useRouter()
 const toastStore = useToastStore()
+
+function goToAbout() {
+  router.push('/about')
+}
 
 const stats = computed(() => [
   { label: '文章', value: props.postCount, action: () => router.push('/timeline') },

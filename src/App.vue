@@ -13,9 +13,6 @@
       style="transition: background-color 0.3s ease;"
     />
 
-    <!-- Top gradient highlight (Mizuki-inspired) -->
-    <div class="top-gradient-highlight" />
-
     <!-- Splash screen -->
     <SplashScreen />
 
