@@ -16,6 +16,17 @@
     --primary-border: hsla(var(--hue), 70%, 55%, 0.3);
     --btn-plain-bg-hover: hsla(var(--hue), 70%, 55%, 0.1);
     --btn-plain-bg-active: hsla(var(--hue), 70%, 55%, 0.15);
+    --radius-large: 1rem;
+    --card-bg: #ffffff;
+    --card-bg-transparent: rgba(255, 255, 255, 0.8);
+    --float-panel-bg: #ffffff;
+    --card-transparent-opacity: 0.8;
+  }
+
+  :root.dark {
+    --card-bg: #181926;
+    --card-bg-transparent: rgba(24, 25, 38, 0.8);
+    --float-panel-bg: #181926;
   }
 
   body {
@@ -56,6 +67,38 @@
   /* Smooth scrolling */
   html {
     scroll-behavior: smooth;
+  }
+}
+
+/* ============ Mizuki-style Utilities ============ */
+@utility expand-animation {
+  @apply relative before:ease-out before:duration-75 before:transition-all active:bg-none hover:before:bg-(--btn-plain-bg-hover) active:before:bg-(--btn-plain-bg-active) z-0
+      before:absolute before:rounded-[inherit] before:inset-0 before:scale-[0.85] hover:before:scale-100 before:-z-10;
+}
+
+@layer components {
+  .btn-plain {
+    @apply transition-colors duration-150 relative flex items-center justify-center bg-none
+        text-black/75 hover:text-(--primary) dark:text-white/75 dark:hover:text-(--primary);
+  }
+  .btn-plain:not(.scale-animation) {
+    @apply hover:bg-(--btn-plain-bg-hover) active:bg-(--btn-plain-bg-active);
+  }
+  .btn-plain.scale-animation {
+    @apply expand-animation;
+  }
+  .float-panel {
+    @apply rounded-(--radius-large) overflow-hidden shadow-xl dark:shadow-none transition-all duration-150;
+    background: var(--float-panel-bg);
+  }
+  .float-panel-closed {
+    @apply -translate-y-1 opacity-0 pointer-events-none;
+    transition-duration: 0.15s;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .float-panel:not(.float-panel-closed) {
+    transition-duration: 0.2s;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
@@ -367,14 +410,4 @@ img, .animate-spin, .animate-pulse, [class*="animate-"] {
   transition: opacity 300ms ease-out;
 }
 
-/* ============ Float Panel Animation (Mizuki-inspired) ============ */
-.float-panel {
-  will-change: transform, opacity;
-  transform-origin: top right;
-}
-
-.float-panel-closed {
-  transform: scaleY(0) scaleX(0.6);
-  opacity: 0;
-  pointer-events: none;
-}
+/* Float panel animation uses the component classes above */

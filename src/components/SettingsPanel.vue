@@ -1,9 +1,10 @@
 <template>
   <div
-    class="absolute top-full right-4 w-80 mt-2 z-[2000] float-panel"
+    id="display-setting"
+    class="float-panel fixed top-full mt-2 right-4 w-80 z-[2000]"
     :class="{ 'float-panel-closed': !isOpen }"
   >
-    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden max-h-[70vh] overflow-y-auto">
+    <div class="bg-(--float-panel-bg) rounded-(--radius-large) overflow-hidden max-h-[70vh] overflow-y-auto border border-black/5 dark:border-white/10">
       <!-- Header -->
       <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200/50 dark:border-slate-700/50">
         <h2 class="text-base font-black text-slate-800 dark:text-white">设置</h2>
@@ -346,17 +347,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.float-panel {
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.15s ease;
-  transform-origin: top right;
-}
-
-.float-panel-closed {
-  transform: scaleY(0) scaleX(0.6);
-  opacity: 0;
-  pointer-events: none;
-}
-
 /* Default slider track */
 .slider {
   -webkit-appearance: none;
