@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative w-screen min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950"
+    class="relative w-screen min-h-screen flex flex-col bg-page"
     style="transition: background-color 0.3s ease;"
   >
     <!-- Background layers -->

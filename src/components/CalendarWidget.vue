@@ -1,6 +1,6 @@
 <template>
   <div
-    class="rounded-3xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg p-4"
+    class="rounded-3xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg p-4"
   >
     <div class="flex items-center justify-between mb-3">
       <button @click="prevMonth" class="text-slate-500 hover:text-accent transition-colors">

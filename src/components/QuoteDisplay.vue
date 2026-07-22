@@ -1,6 +1,6 @@
 <template>
   <div
-    class="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg p-5 md:p-6 relative overflow-hidden"
+    class="rounded-3xl bg-glass-40 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg p-5 md:p-6 relative overflow-hidden"
   >
     <!-- Subtle gradient accent -->
     <div class="absolute -top-8 -right-8 w-24 h-24 bg-accent-soft rounded-full blur-2xl pointer-events-none" />

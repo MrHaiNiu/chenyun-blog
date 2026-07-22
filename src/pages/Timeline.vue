@@ -8,14 +8,14 @@
           <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">归档与探索</h1>
           <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">共 {{ posts.length }} 篇文章</p>
         </div>
-        <div class="max-w-sm mt-3 sm:mt-0 sm:ml-4 shrink-0"><SearchBar /></div>
+        <div class="max-w-sm mt-3 sm:mt-0 sm:ml-4 shrink-0"><SearchBar inline :search-fn="searchPosts" placeholder="搜索文章..." /></div>
       </div>
 
       <!-- Tags row -->
       <div v-if="tags.length > 0" class="flex flex-wrap gap-2 mb-4">
         <button
           @click="selectedTag = ''"
-          :class="selectedTag === '' ? 'bg-accent text-white' : 'bg-white/50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300'"
+          :class="selectedTag === '' ? 'bg-accent text-white' : 'bg-glass-50 text-slate-700 dark:text-slate-300'"
           class="px-3 py-1.5 rounded-xl text-xs font-bold transition-colors border border-white/40 dark:border-white/10"
         >
           全部 ({{ posts.length }})
@@ -24,7 +24,7 @@
           v-for="tag in tags"
           :key="tag.name"
           @click="selectedTag = tag.name"
-          :class="selectedTag === tag.name ? 'bg-accent text-white' : 'bg-white/50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300'"
+          :class="selectedTag === tag.name ? 'bg-accent text-white' : 'bg-glass-50 text-slate-700 dark:text-slate-300'"
           class="px-3 py-1.5 rounded-xl text-xs font-bold transition-colors border border-white/40 dark:border-white/10"
         >
           {{ tag.name }} ({{ tag.count }})
@@ -33,7 +33,7 @@
 
       <!-- View mode toggle (separate row, right-aligned) -->
       <div class="flex justify-end mb-6">
-        <div class="flex gap-2 p-1 bg-white/50 dark:bg-slate-800/50 rounded-xl border border-white/40 dark:border-white/10">
+        <div class="flex gap-2 p-1 bg-glass-50 rounded-xl border border-white/40 dark:border-white/10">
           <button
             @click="viewMode = 'timeline'"
             :class="viewMode === 'timeline' ? 'bg-accent text-white shadow-md' : 'text-slate-500 hover:text-accent'"
@@ -73,7 +73,7 @@
               <RouterLink
                 v-if="i % 2 === 0"
                 :to="`/posts/${post.slug}`"
-                class="group block rounded-2xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500"
+                class="group block rounded-2xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500"
               >
                 <div class="relative overflow-hidden h-32">
                   <img :src="post.cover || siteConfig.defaultPostCover" :alt="post.title" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
@@ -96,7 +96,7 @@
               <RouterLink
                 v-if="i % 2 === 1 || true"
                 :to="`/posts/${post.slug}`"
-                class="group block rounded-2xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500"
+                class="group block rounded-2xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500"
                 :class="{ 'md:opacity-0': i % 2 === 0 && false }"
               >
                 <div class="relative overflow-hidden h-32" v-if="i % 2 === 1">
@@ -125,7 +125,7 @@
           v-motion
           :initial="{ opacity: 0, y: 20 }"
           :visibleOnce="{ opacity: 1, y: 0, transition: { duration: 400, delay: i * 80 } }"
-          class="group block rounded-2xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500"
+          class="group block rounded-2xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500"
         >
           <div class="relative overflow-hidden h-40">
             <img :src="post.cover || siteConfig.defaultPostCover" :alt="post.title" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
@@ -151,6 +151,7 @@ import { getAllPosts } from '@/utils/markdown'
 import { siteConfig } from '@/siteConfig'
 import BackButton from '@/components/BackButton.vue'
 import SearchBar from '@/components/SearchBar.vue'
+import type { SearchResultItem } from '@/components/SearchBar.vue'
 
 const posts = getAllPosts()
 const selectedTag = ref('')
@@ -172,4 +173,20 @@ const filteredPosts = computed(() => {
   if (!selectedTag.value) return posts
   return posts.filter((p) => p.tags.includes(selectedTag.value))
 })
+
+function searchPosts(query: string): SearchResultItem[] {
+  const q = query.toLowerCase()
+  return posts
+    .filter(p =>
+      p.title.toLowerCase().includes(q) ||
+      p.description.toLowerCase().includes(q) ||
+      p.tags.some(t => t.toLowerCase().includes(q))
+    )
+    .map(p => ({
+      title: p.title,
+      description: p.description,
+      tag: 'RouterLink',
+      bindings: { to: `/posts/${p.slug}` },
+    }))
+}
 </script>

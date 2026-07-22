@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="posts.length > 0"
-    class="md:col-span-4 rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl overflow-hidden relative min-h-[200px] cursor-pointer group"
+    class="md:col-span-4 rounded-3xl bg-glass-40 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl overflow-hidden relative min-h-[200px] cursor-pointer group"
     @click="goToPost(currentPost.slug)"
   >
     <!-- Background image with overlay -->

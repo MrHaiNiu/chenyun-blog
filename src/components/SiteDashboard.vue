@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-full rounded-3xl bg-white/30 dark:bg-slate-800/30 backdrop-blur-md border border-white/30 dark:border-white/10 shadow-lg p-5 md:p-6"
+    class="w-full rounded-3xl bg-glass-30 backdrop-blur-md border border-white/30 dark:border-white/10 shadow-lg p-5 md:p-6"
   >
     <div class="flex flex-col md:flex-row items-center justify-between gap-3 md:gap-6">
       <!-- Left: Time & Uptime -->

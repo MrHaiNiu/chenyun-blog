@@ -3,7 +3,7 @@
     <div
       v-if="isOpen"
       ref="dropdownRef"
-      class="absolute top-full right-0 mt-2 w-72 rounded-2xl bg-white/95 dark:bg-slate-800/95 backdrop-blur-2xl border border-white/50 dark:border-white/10 shadow-2xl overflow-hidden z-[1100] origin-top-right"
+      class="absolute top-full right-0 mt-2 w-72 rounded-2xl bg-glass-95 backdrop-blur-2xl border border-white/50 dark:border-white/10 shadow-2xl overflow-hidden z-[1100] origin-top-right"
     >
       <div class="px-4 py-4 space-y-4 max-h-[70vh] overflow-y-auto">
         <!-- ========== Preset Colors (Mizuki-style swatches) ========== -->
@@ -44,71 +44,6 @@
               class="w-6 h-6 rounded-full flex-shrink-0 border-2 border-white/60 shadow-md transition-transform hover:scale-110 active:scale-95"
               :style="{ background: `hsl(${localHue}, 70%, 55%)` }"
               title="重置"
-            />
-          </div>
-        </section>
-
-        <!-- ========== Separator ========== -->
-        <div class="border-t border-slate-200/60 dark:border-slate-700/60" />
-
-        <!-- ========== Layout + Settings ========== -->
-        <section>
-          <div class="flex items-center gap-1.5 mb-2.5">
-            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-            </svg>
-            <h3 class="text-xs font-bold text-slate-600 dark:text-slate-300">布局</h3>
-          </div>
-          <div class="flex gap-2">
-            <button
-              @click="setLayout('sidebar')"
-              class="flex-1 px-2 py-1.5 text-xs font-bold rounded-lg transition-all duration-200"
-              :class="themeStore.layoutMode === 'sidebar'
-                ? 'text-white shadow-md'
-                : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600'"
-              :style="themeStore.layoutMode === 'sidebar' ? { backgroundColor: `hsl(${localHue}, 70%, 55%)` } : {}"
-            >
-              侧栏
-            </button>
-            <button
-              @click="setLayout('full')"
-              class="flex-1 px-2 py-1.5 text-xs font-bold rounded-lg transition-all duration-200"
-              :class="themeStore.layoutMode === 'full'
-                ? 'text-white shadow-md'
-                : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600'"
-              :style="themeStore.layoutMode === 'full' ? { backgroundColor: `hsl(${localHue}, 70%, 55%)` } : {}"
-            >
-              全宽
-            </button>
-          </div>
-          <!-- Page width slider -->
-          <div class="mt-2.5">
-            <div class="flex items-center justify-between mb-1">
-              <span class="text-[10px] text-slate-400 dark:text-slate-500">页面宽度</span>
-              <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 tabular-nums">{{ localPageWidth }}rem</span>
-            </div>
-            <input
-              v-model.number="localPageWidth"
-              type="range"
-              min="48"
-              max="100"
-              class="w-full h-1 rounded-full appearance-none cursor-pointer bg-slate-200 dark:bg-slate-700"
-              @input="onPageWidthChange"
-            />
-          </div>
-          <!-- Card radius slider -->
-          <div class="mt-2.5">
-            <div class="flex items-center justify-between mb-1">
-              <span class="text-[10px] text-slate-400 dark:text-slate-500">卡片圆角</span>
-              <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 tabular-nums">{{ localCardRadius }}px</span>
-            </div>
-            <input
-              v-model.number="localCardRadius"
-              type="range"
-              min="0"
-              max="32"
-              class="w-full h-1 rounded-full appearance-none cursor-pointer bg-slate-200 dark:bg-slate-700"
-              @input="onCardRadiusChange"
             />
           </div>
         </section>
@@ -172,8 +107,6 @@ const dropdownRef = ref<HTMLElement | null>(null)
 
 const localHue = ref(themeStore.themeHue)
 const localWallpaper = ref(themeStore.wallpaperUrl)
-const localPageWidth = ref(themeStore.pageWidth)
-const localCardRadius = ref(themeStore.cardRadius)
 const wallpaperMode = ref(getWallpaperMode())
 
 interface PresetColor {
@@ -218,8 +151,6 @@ watch(() => props.isOpen, (open) => {
   if (open) {
     localHue.value = themeStore.themeHue
     localWallpaper.value = themeStore.wallpaperUrl
-    localPageWidth.value = themeStore.pageWidth
-    localCardRadius.value = themeStore.cardRadius
     wallpaperMode.value = getWallpaperMode()
   }
 })
@@ -250,24 +181,10 @@ function setWallpaperMode(mode: string) {
 
 function onWallpaperInput() {}
 
-function setLayout(mode: 'sidebar' | 'full') {
-  themeStore.setLayoutMode(mode)
-}
-
-function onPageWidthChange() {
-  themeStore.setPageWidth(localPageWidth.value)
-}
-
-function onCardRadiusChange() {
-  themeStore.setCardRadius(localCardRadius.value)
-}
-
 function resetSettings() {
   themeStore.resetSettings()
   localHue.value = 240
   localWallpaper.value = ''
-  localPageWidth.value = 75
-  localCardRadius.value = 24
   wallpaperMode.value = 'banner'
   localStorage.removeItem('blog-wallpaper-mode')
 }

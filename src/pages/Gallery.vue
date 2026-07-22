@@ -8,7 +8,7 @@
           <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">相册</h1>
           <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">共 {{ albums.length }} 个相册</p>
         </div>
-        <div class="max-w-sm mt-3 sm:mt-0 sm:ml-4 shrink-0"><SearchBar /></div>
+        <div class="max-w-sm mt-3 sm:mt-0 sm:ml-4 shrink-0"><SearchBar inline :search-fn="searchAlbums" placeholder="搜索相册..." /></div>
       </div>
 
 
@@ -21,7 +21,7 @@
           :initial="{ opacity: 0, y: 30 }"
           :visibleOnce="{ opacity: 1, y: 0, transition: { duration: 500, delay: i * 100 } }"
           @click="openAlbum(album)"
-          class="group rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl cursor-pointer"
+          class="group rounded-3xl bg-glass-40 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl cursor-pointer"
         >
           <div class="relative aspect-[16/10] overflow-hidden">
             <img
@@ -82,11 +82,27 @@ import { albums } from '@/data/albums'
 import type { Album } from '@/types'
 import BackButton from '@/components/BackButton.vue'
 import SearchBar from '@/components/SearchBar.vue'
+import type { SearchResultItem } from '@/components/SearchBar.vue'
 
 const selectedAlbum = ref<Album | null>(null)
 
 function openAlbum(album: Album) {
   selectedAlbum.value = album
+}
+
+function searchAlbums(query: string): SearchResultItem[] {
+  const q = query.toLowerCase()
+  return albums
+    .filter(a =>
+      a.title.toLowerCase().includes(q) ||
+      a.description.toLowerCase().includes(q)
+    )
+    .map(a => ({
+      title: a.title,
+      description: a.description,
+      tag: 'div',
+      bindings: {},
+    }))
 }
 </script>
 

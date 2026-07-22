@@ -4,7 +4,7 @@
     :initial="{ opacity: 0, y: 20 }"
     :visibleOnce="{ opacity: 1, y: 0, transition: { duration: 500, delay: index * 80 } }"
     @click="$emit('click')"
-    class="group rounded-2xl md:rounded-3xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden transition-all duration-500 hover:shadow-xl cursor-pointer flex flex-col md:flex-row"
+    class="group rounded-2xl md:rounded-3xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden transition-all duration-500 hover:shadow-xl cursor-pointer flex flex-col md:flex-row"
   >
     <!-- Cover image -->
     <div class="relative overflow-hidden md:w-64 shrink-0 aspect-[16/10] md:aspect-auto">

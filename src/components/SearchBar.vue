@@ -1,8 +1,52 @@
 <template>
-  <div class="relative">
+  <!-- Inline mode: always-visible input with results below -->
+  <div v-if="inline" class="relative">
+    <div class="relative">
+      <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+      <input
+        ref="inlineInputRef"
+        v-model="searchQuery"
+        type="text"
+        :placeholder="placeholder"
+        class="w-full h-9 pl-9 pr-3 rounded-xl bg-glass-70 border border-slate-200 dark:border-slate-700 outline-none text-sm text-slate-800 dark:text-white placeholder-slate-400 focus:border-accent focus:ring-1 focus:ring-accent/30 transition-all"
+        @input="onInlineInput"
+      />
+    </div>
+
+    <!-- Inline results -->
+    <Transition name="inline-results">
+      <div
+        v-if="searchQuery.trim() && inlineResultsVisible"
+        class="absolute top-full mt-1 left-0 right-0 z-50 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl overflow-hidden"
+      >
+        <div v-if="inlineResults.length === 0" class="px-4 py-6 text-center text-xs text-slate-400">
+          未找到匹配结果
+        </div>
+        <div v-else>
+          <component
+            :is="result.tag"
+            v-for="(result, idx) in inlineResults"
+            :key="idx"
+            v-bind="result.bindings"
+            @click="searchQuery = ''; inlineResultsVisible = false"
+            class="block px-4 py-2.5 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors border-b border-slate-100 dark:border-slate-700/30 last:border-0"
+          >
+            <p class="text-sm font-bold text-slate-800 dark:text-slate-200" v-html="highlightMatch(result.title)" />
+            <p v-if="result.description" class="text-xs text-slate-400 mt-0.5 line-clamp-1" v-html="highlightMatch(result.description)" />
+          </component>
+        </div>
+      </div>
+    </Transition>
+  </div>
+
+  <!-- Default mode: button that opens popup overlay (for Home page) -->
+  <div v-else class="relative">
     <button
       @click="toggleSearch"
-      class="w-full h-12 md:h-14 rounded-2xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg px-5 flex items-center gap-3 hover:shadow-xl transition-all duration-300 cursor-pointer group"
+      class="w-full h-12 md:h-14 rounded-2xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg px-5 flex items-center gap-3 hover:shadow-xl transition-all duration-300 cursor-pointer group"
     >
       <svg class="w-5 h-5 text-slate-500 dark:text-slate-400 group-hover:text-accent transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <circle cx="11" cy="11" r="8" />
@@ -47,7 +91,6 @@
 
             <!-- Results -->
             <div class="max-h-[60vh] overflow-y-auto">
-              <!-- Only show results when there's a query -->
               <div v-if="!searchQuery.trim()" class="px-5 py-8 text-center text-sm text-slate-400">
                 输入关键词开始搜索
               </div>
@@ -82,11 +125,34 @@ import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
 import { getAllPosts } from '@/utils/markdown'
 import type { PostMeta } from '@/types'
 
+export interface SearchResultItem {
+  title: string
+  description?: string
+  /** The rendered tag, e.g. 'RouterLink' or 'a' */
+  tag: string
+  /** v-bind bindings for the tag — e.g. { to: '/posts/foo' } or { href: '...' } */
+  bindings: Record<string, unknown>
+}
+
+const props = withDefaults(defineProps<{
+  inline?: boolean
+  placeholder?: string
+  /** Custom search function for inline mode — receives the query, returns results */
+  searchFn?: (query: string) => SearchResultItem[]
+}>(), {
+  inline: false,
+  placeholder: '搜索...',
+  searchFn: undefined,
+})
+
 const posts = getAllPosts()
 const isSearchOpen = ref(false)
 const searchQuery = ref('')
 const searchInputRef = ref<HTMLInputElement>()
+const inlineInputRef = ref<HTMLInputElement>()
+const inlineResultsVisible = ref(false)
 
+/** Results for overlay mode — always searches posts */
 const searchResults = computed<PostMeta[]>(() => {
   if (!searchQuery.value.trim()) return []
   const q = searchQuery.value.toLowerCase()
@@ -97,11 +163,21 @@ const searchResults = computed<PostMeta[]>(() => {
   ).slice(0, 10)
 })
 
+/** Results for inline mode — uses custom searchFn if provided */
+const inlineResults = computed<SearchResultItem[]>(() => {
+  if (!searchQuery.value.trim() || !props.searchFn) return []
+  return props.searchFn(searchQuery.value.trim()).slice(0, 10)
+})
+
 function highlightMatch(text: string): string {
   if (!searchQuery.value.trim() || !text) return text
   const safeQuery = searchQuery.value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   const regex = new RegExp(`(${safeQuery})`, 'gi')
   return text.replace(regex, '<mark class="bg-accent-mid text-inherit rounded px-0.5">$1</mark>')
+}
+
+function onInlineInput() {
+  inlineResultsVisible.value = searchQuery.value.trim().length > 0
 }
 
 function toggleSearch() {
@@ -117,6 +193,7 @@ function closeSearch() {
 }
 
 function handleKeydown(e: KeyboardEvent) {
+  if (props.inline) return
   if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
     e.preventDefault()
     toggleSearch()
@@ -142,5 +219,15 @@ onUnmounted(() => {
 .search-overlay-enter-from,
 .search-overlay-leave-to {
   opacity: 0;
+}
+
+.inline-results-enter-active,
+.inline-results-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.inline-results-enter-from,
+.inline-results-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
 }
 </style>

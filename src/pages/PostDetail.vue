@@ -5,7 +5,7 @@
     <div v-if="post" class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
       <!-- Article Body -->
       <article
-        class="lg:col-span-8 rounded-3xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl overflow-hidden"
+        class="lg:col-span-8 rounded-3xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl overflow-hidden"
       >
         <!-- Cover -->
         <div v-if="post.cover" class="aspect-[16/9] overflow-hidden">
@@ -66,7 +66,7 @@
         <!-- TOC -->
         <div
           v-if="toc.length > 0"
-          class="rounded-3xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5 sticky top-24"
+          class="rounded-3xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5 sticky top-24"
         >
           <h3 class="text-sm font-black text-slate-900 dark:text-white mb-4 border-l-4 border-accent pl-2">
             目录
@@ -91,7 +91,7 @@
         <!-- Recent Posts -->
         <div
           v-if="recentPosts.length > 0"
-          class="rounded-3xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5"
+          class="rounded-3xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5"
         >
           <h3 class="font-black text-slate-900 dark:text-white mb-4 border-l-4 border-accent pl-2 text-sm">
             RECOMMENDED

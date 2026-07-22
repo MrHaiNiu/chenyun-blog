@@ -19,27 +19,44 @@
     --btn-plain-bg-hover: hsla(var(--hue), 70%, 55%, 0.1);
     --btn-plain-bg-active: hsla(var(--hue), 70%, 55%, 0.15);
     --radius-large: 1rem;
+    --page-bg: #f8fafc;
     --card-bg: #ffffff;
     --card-bg-transparent: rgba(255, 255, 255, 0.8);
     --float-panel-bg: #ffffff;
-    --card-transparent-opacity: 0.8;
+
+    /* Glass card backgrounds at various opacities (overridden by theme presets) */
+    --glass-95: rgba(255, 255, 255, 0.95);
+    --glass-70: rgba(255, 255, 255, 0.7);
+    --glass-60: rgba(255, 255, 255, 0.6);
+    --glass-50: rgba(255, 255, 255, 0.5);
+    --glass-40: rgba(255, 255, 255, 0.4);
+    --glass-30: rgba(255, 255, 255, 0.3);
   }
 
   :root.dark {
+    --page-bg: #020617;
     --card-bg: #181926;
     --card-bg-transparent: rgba(24, 25, 38, 0.8);
     --float-panel-bg: #181926;
+    --glass-95: rgba(30, 41, 59, 0.95);
+    --glass-70: rgba(30, 41, 59, 0.7);
+    --glass-60: rgba(30, 41, 59, 0.6);
+    --glass-50: rgba(30, 41, 59, 0.5);
+    --glass-40: rgba(30, 41, 59, 0.4);
+    --glass-30: rgba(30, 41, 59, 0.3);
   }
 
   body {
     font-family: var(--font-serif);
-    @apply transition-colors duration-500 text-slate-900 bg-slate-50;
+    @apply transition-colors duration-500 text-slate-900;
+    background-color: var(--page-bg, #f8fafc);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   .dark body {
-    @apply text-slate-100 bg-slate-950;
+    @apply text-slate-100;
+    background-color: var(--page-bg, #020617);
   }
 
   h1, h2, h3, h4 {
@@ -71,6 +88,15 @@
     scroll-behavior: smooth;
   }
 }
+
+/* ============ Page / Glass card background utilities ============ */
+@utility bg-page { background-color: var(--page-bg); }
+@utility bg-glass-95 { background-color: var(--glass-95); }
+@utility bg-glass-70 { background-color: var(--glass-70); }
+@utility bg-glass-60 { background-color: var(--glass-60); }
+@utility bg-glass-50 { background-color: var(--glass-50); }
+@utility bg-glass-40 { background-color: var(--glass-40); }
+@utility bg-glass-30 { background-color: var(--glass-30); }
 
 /* ============ Mizuki-style Utilities ============ */
 @utility expand-animation {

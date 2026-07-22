@@ -7,7 +7,7 @@
       class="px-3 py-2 rounded-lg text-sm font-bold transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed"
       :class="currentPage === 1
         ? 'bg-slate-200/50 dark:bg-slate-700/50 text-slate-400'
-        : 'bg-white/50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 hover:bg-accent hover:text-white'"
+        : 'bg-glass-50 text-slate-700 dark:text-slate-300 hover:bg-accent hover:text-white'"
     >
       <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
     </button>
@@ -20,7 +20,7 @@
       class="w-9 h-9 rounded-lg text-sm font-bold transition-all duration-300"
       :class="page === currentPage
         ? 'bg-accent text-white shadow-lg scale-110'
-        : 'bg-white/50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 hover:bg-accent-soft'"
+        : 'bg-glass-50 text-slate-700 dark:text-slate-300 hover:bg-accent-soft'"
     >
       {{ page }}
     </button>
@@ -32,7 +32,7 @@
       class="px-3 py-2 rounded-lg text-sm font-bold transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed"
       :class="currentPage === totalPages
         ? 'bg-slate-200/50 dark:bg-slate-700/50 text-slate-400'
-        : 'bg-white/50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 hover:bg-accent hover:text-white'"
+        : 'bg-glass-50 text-slate-700 dark:text-slate-300 hover:bg-accent hover:text-white'"
     >
       <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
     </button>

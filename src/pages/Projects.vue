@@ -8,14 +8,14 @@
           <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">项目</h1>
           <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">共 {{ projectsData.length }} 个项目</p>
         </div>
-        <div class="max-w-sm mt-3 sm:mt-0 sm:ml-4 shrink-0"><SearchBar /></div>
+        <div class="max-w-sm mt-3 sm:mt-0 sm:ml-4 shrink-0"><SearchBar inline :search-fn="searchProjects" placeholder="搜索项目..." /></div>
       </div>
 
       <!-- Tags row -->
       <div v-if="tags.length > 0" class="flex flex-wrap gap-2 mb-4">
         <button
           @click="selectedTag = ''"
-          :class="selectedTag === '' ? 'bg-accent text-white' : 'bg-white/50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300'"
+          :class="selectedTag === '' ? 'bg-accent text-white' : 'bg-glass-50 text-slate-700 dark:text-slate-300'"
           class="px-3 py-1.5 rounded-xl text-xs font-bold transition-colors border border-white/40 dark:border-white/10"
         >
           全部 ({{ projectsData.length }})
@@ -24,7 +24,7 @@
           v-for="tag in tags"
           :key="tag.name"
           @click="selectedTag = tag.name"
-          :class="selectedTag === tag.name ? 'bg-accent text-white' : 'bg-white/50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300'"
+          :class="selectedTag === tag.name ? 'bg-accent text-white' : 'bg-glass-50 text-slate-700 dark:text-slate-300'"
           class="px-3 py-1.5 rounded-xl text-xs font-bold transition-colors border border-white/40 dark:border-white/10"
         >
           {{ tag.name }} ({{ tag.count }})
@@ -33,7 +33,7 @@
 
       <!-- View mode toggle (separate row, right-aligned) -->
       <div class="flex justify-end mb-6">
-        <div class="flex gap-2 p-1 bg-white/50 dark:bg-slate-800/50 rounded-xl border border-white/40 dark:border-white/10">
+        <div class="flex gap-2 p-1 bg-glass-50 rounded-xl border border-white/40 dark:border-white/10">
           <button
             @click="viewMode = 'timeline'"
             :class="viewMode === 'timeline' ? 'bg-accent text-white shadow-md' : 'text-slate-500 hover:text-accent'"
@@ -72,7 +72,7 @@
                 :href="project.githubUrl"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="group block rounded-2xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500"
+                class="group block rounded-2xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500"
               >
                 <div class="p-5">
                   <div class="flex items-center gap-3 mb-3">
@@ -94,7 +94,7 @@
                 :href="project.githubUrl"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="group block rounded-2xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500"
+                class="group block rounded-2xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500"
               >
                 <div class="p-5">
                   <div class="flex items-center gap-3 mb-3">
@@ -124,7 +124,7 @@
           v-motion
           :initial="{ opacity: 0, y: 30 }"
           :visibleOnce="{ opacity: 1, y: 0, transition: { duration: 500, delay: i * 100 } }"
-          class="group rounded-3xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500"
+          class="group rounded-3xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500"
         >
           <div class="p-5">
             <div class="flex items-center gap-3 mb-3">
@@ -152,6 +152,7 @@ import { ref, computed } from 'vue'
 import { projectsData } from '@/data/projects'
 import BackButton from '@/components/BackButton.vue'
 import SearchBar from '@/components/SearchBar.vue'
+import type { SearchResultItem } from '@/components/SearchBar.vue'
 
 const selectedTag = ref('')
 const viewMode = ref<'timeline' | 'grid'>('grid')
@@ -172,4 +173,20 @@ const filteredProjects = computed(() => {
   if (!selectedTag.value) return projectsData
   return projectsData.filter((p) => p.tags.includes(selectedTag.value))
 })
+
+function searchProjects(query: string): SearchResultItem[] {
+  const q = query.toLowerCase()
+  return projectsData
+    .filter(p =>
+      p.name.toLowerCase().includes(q) ||
+      p.description.toLowerCase().includes(q) ||
+      p.tags.some(t => t.toLowerCase().includes(q))
+    )
+    .map(p => ({
+      title: p.name,
+      description: p.description,
+      tag: 'a',
+      bindings: { href: p.githubUrl, target: '_blank', rel: 'noopener noreferrer' },
+    }))
+}
 </script>

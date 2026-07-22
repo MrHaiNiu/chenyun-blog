@@ -16,45 +16,25 @@
       </div>
 
       <div class="px-4 py-3 space-y-4">
-        <!-- ========== Theme Color ========== -->
+        <!-- ========== Wallpaper ========== -->
         <section>
           <div class="flex items-center justify-between mb-2">
             <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 relative ml-3
               before:w-1 before:h-4 before:rounded-md before:bg-(--primary)
               before:absolute before:-left-3 before:top-1/2 before:-translate-y-1/2"
             >
-              主题色
+              壁纸
             </h3>
-            <div class="flex items-center gap-1">
-              <div class="w-8 h-6 flex items-center justify-center text-xs font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 rounded">
-                {{ localHue }}
-              </div>
-            </div>
+            <button
+              @click="resetWallpaper"
+              class="w-6 h-6 flex items-center justify-center rounded text-slate-400 hover:text-(--primary) hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
+              title="重置"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
           </div>
-          <div class="w-full h-6 px-1 rounded select-none"
-            :style="{ background: 'linear-gradient(to right, hsl(0,70%,55%), hsl(60,70%,55%), hsl(120,70%,55%), hsl(180,70%,55%), hsl(240,70%,55%), hsl(300,70%,55%), hsl(360,70%,55%))' }"
-          >
-            <input
-              aria-label="Theme Color"
-              type="range"
-              min="0"
-              max="360"
-              step="5"
-              v-model.number="localHue"
-              class="slider color-slider w-full"
-              @input="onHueChange"
-            />
-          </div>
-        </section>
-
-        <!-- ========== Wallpaper ========== -->
-        <section>
-          <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 relative ml-3 mb-2
-            before:w-1 before:h-4 before:rounded-md before:bg-(--primary)
-            before:absolute before:-left-3 before:top-1/2 before:-translate-y-1/2"
-          >
-            壁纸
-          </h3>
           <div class="space-y-2">
             <input
               v-model="localWallpaper"
@@ -80,14 +60,57 @@
           </div>
         </section>
 
+        <!-- ========== Background Color ========== -->
+        <section>
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 relative ml-3
+              before:w-1 before:h-4 before:rounded-md before:bg-(--primary)
+              before:absolute before:-left-3 before:top-1/2 before:-translate-y-1/2"
+            >
+              背景颜色
+            </h3>
+            <button
+              @click="resetBgTheme"
+              class="w-6 h-6 flex items-center justify-center rounded text-slate-400 hover:text-(--primary) hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
+              title="重置"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button
+              v-for="p in themeStore.bgPresets"
+              :key="p.id"
+              @click="selectBgTheme(p.id)"
+              class="w-9 h-9 rounded-xl border-2 transition-all duration-200 active:scale-90"
+              :class="localBgThemeId === p.id ? 'border-(--primary) ring-2 ring-(--primary)/30 scale-110' : 'border-transparent hover:scale-105'"
+              :style="{ backgroundColor: themeStore.isDark ? p.dark : p.light }"
+              :title="p.name"
+            />
+          </div>
+        </section>
+
         <!-- ========== Banner Options ========== -->
         <section>
-          <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 relative ml-3 mb-2
-            before:w-1 before:h-4 before:rounded-md before:bg-(--primary)
-            before:absolute before:-left-3 before:top-1/2 before:-translate-y-1/2"
-          >
-            横幅选项
-          </h3>
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 relative ml-3
+              before:w-1 before:h-4 before:rounded-md before:bg-(--primary)
+              before:absolute before:-left-3 before:top-1/2 before:-translate-y-1/2"
+            >
+              横幅选项
+            </h3>
+            <button
+              @click="resetBanner"
+              class="w-6 h-6 flex items-center justify-center rounded text-slate-400 hover:text-(--primary) hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
+              title="重置"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
+          </div>
           <div class="space-y-1">
             <!-- Banner toggle (Mizuki-style) -->
             <button
@@ -123,7 +146,7 @@
                 max="100"
                 v-model.number="localBannerHeight"
                 class="slider range-slider w-full"
-                @input="onBannerHeightChange"
+                @input="handleRangeInput($event); onBannerHeightChange()"
               />
             </div>
 
@@ -150,77 +173,43 @@
           </div>
         </section>
 
-        <!-- ========== Layout ========== -->
+        <!-- ========== Theme Color (with reset) ========== -->
         <section>
-          <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 relative ml-3 mb-2
-            before:w-1 before:h-4 before:rounded-md before:bg-(--primary)
-            before:absolute before:-left-3 before:top-1/2 before:-translate-y-1/2"
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 relative ml-3
+              before:w-1 before:h-4 before:rounded-md before:bg-(--primary)
+              before:absolute before:-left-3 before:top-1/2 before:-translate-y-1/2"
+            >
+              主题色
+            </h3>
+            <div class="flex items-center gap-1">
+              <button
+                @click="resetHue"
+                class="w-6 h-6 flex items-center justify-center rounded text-slate-400 hover:text-(--primary) hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
+                title="重置"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </button>
+              <div class="w-8 h-6 flex items-center justify-center text-xs font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 rounded">
+                {{ localHue }}
+              </div>
+            </div>
+          </div>
+          <div class="w-full h-6 px-1 rounded select-none"
+            :style="{ background: 'linear-gradient(to right, hsl(0,70%,55%), hsl(60,70%,55%), hsl(120,70%,55%), hsl(180,70%,55%), hsl(240,70%,55%), hsl(300,70%,55%), hsl(360,70%,55%))' }"
           >
-            布局
-          </h3>
-          <div class="space-y-2">
-            <!-- Layout mode buttons (Mizuki-style) -->
-            <div class="flex gap-2">
-              <button
-                @click="setLayout('sidebar')"
-                class="flex-1 rounded-md py-2 px-3 flex items-center justify-center gap-2 active:scale-95 transition-all"
-                :class="themeStore.layoutMode === 'sidebar'
-                  ? 'bg-(--primary) text-white'
-                  : 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600/50'"
-              >
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M3 3h7v7H3V3zm0 11h7v7H3v-7zm11-11h7v7h-7V3zm0 11h7v7h-7v-7z" />
-                </svg>
-                <span class="text-xs font-bold">侧栏</span>
-              </button>
-              <button
-                @click="setLayout('full')"
-                class="flex-1 rounded-md py-2 px-3 flex items-center justify-center gap-2 active:scale-95 transition-all"
-                :class="themeStore.layoutMode === 'full'
-                  ? 'bg-(--primary) text-white'
-                  : 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600/50'"
-              >
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z" />
-                </svg>
-                <span class="text-xs font-bold">全宽</span>
-              </button>
-            </div>
-
-            <!-- Page width slider (Mizuki-style) -->
-            <div class="rounded-lg bg-slate-100 dark:bg-slate-700/50 p-2.5">
-              <div class="flex items-center justify-between mb-1">
-                <span class="text-xs font-medium text-slate-500 dark:text-slate-400">页面宽度</span>
-                <span class="text-xs text-slate-600 dark:text-slate-300 font-mono">{{ localPageWidth }}rem</span>
-              </div>
-              <input
-                aria-label="Page width"
-                type="range"
-                min="48"
-                max="100"
-                v-model.number="localPageWidth"
-                class="slider range-slider w-full"
-                @input="onPageWidthChange"
-              />
-            </div>
-
-            <!-- Card radius slider (Mizuki-style) -->
-            <div class="rounded-lg bg-slate-100 dark:bg-slate-700/50 p-2.5">
-              <div class="flex items-center justify-between mb-1">
-                <span class="text-xs font-medium text-slate-500 dark:text-slate-400">卡片圆角</span>
-                <span class="text-xs text-slate-600 dark:text-slate-300 font-mono">{{ localCardRadius }}px</span>
-              </div>
-              <input
-                aria-label="Card radius"
-                type="range"
-                min="0"
-                max="32"
-                v-model.number="localCardRadius"
-                class="slider range-slider w-full"
-                @input="onCardRadiusChange"
-              />
-            </div>
-
+            <input
+              aria-label="Theme Color"
+              type="range"
+              min="0"
+              max="360"
+              step="5"
+              v-model.number="localHue"
+              class="slider color-slider w-full"
+              @input="onHueChange"
+            />
           </div>
         </section>
 
@@ -248,8 +237,7 @@ const themeStore = useThemeStore()
 const localHue = ref(themeStore.themeHue)
 const localWallpaper = ref(themeStore.wallpaperUrl)
 const localBannerHeight = ref(themeStore.bannerHeight)
-const localPageWidth = ref(themeStore.pageWidth)
-const localCardRadius = ref(themeStore.cardRadius)
+const localBgThemeId = ref(themeStore.bgThemeId)
 const wavesEnabled = ref(localStorage.getItem('blog-waves-enabled') !== 'false')
 
 // Sync when panel opens
@@ -258,8 +246,7 @@ watch(() => props.isOpen, (open) => {
     localHue.value = themeStore.themeHue
     localWallpaper.value = themeStore.wallpaperUrl
     localBannerHeight.value = themeStore.bannerHeight
-    localPageWidth.value = themeStore.pageWidth
-    localCardRadius.value = themeStore.cardRadius
+    localBgThemeId.value = themeStore.bgThemeId
     wavesEnabled.value = localStorage.getItem('blog-waves-enabled') !== 'false'
     // Re-set range progress after DOM updates
     requestAnimationFrame(refreshRangeProgress)
@@ -293,21 +280,40 @@ function onWallpaperInput() { /* debounce - apply on blur or button */ }
 function setWallpaper(url: string) { localWallpaper.value = url; themeStore.setWallpaper(url) }
 function toggleBanner() { themeStore.setBannerEnabled(!themeStore.bannerEnabled) }
 function onBannerHeightChange() { themeStore.setBannerHeight(localBannerHeight.value) }
-function setLayout(mode: 'sidebar' | 'full') { themeStore.setLayoutMode(mode) }
-function onPageWidthChange() { themeStore.setPageWidth(localPageWidth.value) }
-function onCardRadiusChange() { themeStore.setCardRadius(localCardRadius.value) }
+function selectBgTheme(id: number) {
+  localBgThemeId.value = id
+  themeStore.setBgThemeId(id)
+}
 function toggleWaves() {
   wavesEnabled.value = !wavesEnabled.value
   localStorage.setItem('blog-waves-enabled', `${wavesEnabled.value}`)
   window.dispatchEvent(new CustomEvent('waves-toggle', { detail: wavesEnabled.value }))
 }
+function resetWallpaper() {
+  localWallpaper.value = ''
+  themeStore.setWallpaper('')
+}
+function resetBanner() {
+  localBannerHeight.value = 100
+  themeStore.setBannerHeight(100)
+  if (!themeStore.bannerEnabled) {
+    themeStore.setBannerEnabled(true)
+  }
+}
+function resetHue() {
+  localHue.value = 240
+  themeStore.setHue(240)
+}
+function resetBgTheme() {
+  localBgThemeId.value = 0
+  themeStore.setBgThemeId(0)
+}
 function resetSettings() {
   themeStore.resetSettings()
   localHue.value = 240
   localWallpaper.value = ''
-  localBannerHeight.value = 60
-  localPageWidth.value = 75
-  localCardRadius.value = 24
+  localBannerHeight.value = 100
+  localBgThemeId.value = 0
   wavesEnabled.value = true
   localStorage.setItem('blog-waves-enabled', 'true')
   window.dispatchEvent(new CustomEvent('waves-toggle', { detail: true }))

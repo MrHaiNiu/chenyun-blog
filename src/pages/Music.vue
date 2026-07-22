@@ -8,10 +8,10 @@
           <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">音乐</h1>
           <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">放松一下，听听歌吧</p>
         </div>
-        <div class="max-w-sm mt-3 sm:mt-0 sm:ml-4 shrink-0"><SearchBar /></div>
+        <div class="max-w-sm mt-3 sm:mt-0 sm:ml-4 shrink-0"><SearchBar inline :search-fn="searchMusic" placeholder="搜索歌曲..." /></div>
       </div>
 
-      <div class="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-6 md:p-10">
+      <div class="rounded-3xl bg-glass-40 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-6 md:p-10">
         <div class="text-center py-12">
           <div class="text-5xl mb-4">🎵</div>
           <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300 mb-2">音乐模块</h3>
@@ -27,4 +27,10 @@
 <script setup lang="ts">
 import BackButton from '@/components/BackButton.vue'
 import SearchBar from '@/components/SearchBar.vue'
+import type { SearchResultItem } from '@/components/SearchBar.vue'
+
+function searchMusic(_query: string): SearchResultItem[] {
+  // 音乐页面暂无数据，搜索返回空
+  return []
+}
 </script>
