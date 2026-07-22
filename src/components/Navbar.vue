@@ -44,7 +44,7 @@
         <!-- Settings button -->
         <button
           id="settings-btn"
-          @click="isSettingsOpen = !isSettingsOpen"
+          @click.stop="isSettingsOpen = !isSettingsOpen"
           class="w-9 h-9 rounded-lg flex items-center justify-center text-black/70 dark:text-white/70 hover:bg-(--primary) hover:text-white transition-all duration-150"
           title="设置"
         >
@@ -127,12 +127,13 @@
       </div>
     </Transition>
 
-    <!-- Settings Panel -->
-    <SettingsPanel
-      :is-open="isSettingsOpen"
-      @close="isSettingsOpen = false"
-    />
   </header>
+
+  <!-- Settings Panel (outside header to avoid transform / stacking issues) -->
+  <SettingsPanel
+    :is-open="isSettingsOpen"
+    @close="isSettingsOpen = false"
+  />
 </template>
 
 <script setup lang="ts">

@@ -1,7 +1,7 @@
 <template>
   <div
     id="display-setting"
-    class="float-panel fixed top-full mt-2 right-4 w-80 z-[2000]"
+    class="float-panel fixed top-14 right-4 w-80 z-[2000]"
     :class="{ 'float-panel-closed': !isOpen }"
   >
     <div class="bg-(--float-panel-bg) rounded-(--radius-large) overflow-hidden max-h-[70vh] overflow-y-auto border border-black/5 dark:border-white/10">
