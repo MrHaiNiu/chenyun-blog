@@ -3,6 +3,8 @@
 @import "katex/dist/katex.min.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
+@custom-variant router-link-exact-active (&.router-link-exact-active);
+@custom-variant router-link-active (&.router-link-active);
 
 @layer base {
   :root {
