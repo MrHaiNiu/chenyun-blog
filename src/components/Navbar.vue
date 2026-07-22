@@ -97,7 +97,11 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
           </svg>
         </button>
-        <button @click="toggleMobileMenu" class="w-8 h-8 rounded-lg flex items-center justify-center text-black/70 dark:text-white/70 hover:bg-(--primary) hover:text-white transition-all duration-150">
+        <button
+          id="mobile-menu-btn"
+          @click.stop="toggleMobileMenu"
+          class="mobile-menu-btn w-8 h-8 rounded-lg flex items-center justify-center text-black/70 dark:text-white/70 hover:bg-(--primary) hover:text-white transition-all duration-150"
+        >
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
@@ -105,29 +109,47 @@
       </div>
     </nav>
 
-    <!-- Mobile menu -->
-    <Transition name="mobile-menu">
-      <div v-if="isMobileMenuOpen" class="md:hidden border-t border-black/5 dark:border-white/5">
+  </header>
+
+  <!-- Mobile menu floating panel (Mizuki-style) -->
+  <div class="fixed inset-0 z-[2000] md:hidden"
+    :class="{ 'pointer-events-none': !isMobileMenuOpen }"
+  >
+    <!-- Backdrop -->
+    <div
+      class="absolute inset-0 bg-black/30 transition-opacity duration-200 cursor-default"
+      :class="{ 'opacity-100': isMobileMenuOpen, 'opacity-0': !isMobileMenuOpen }"
+      @click="isMobileMenuOpen = false"
+    />
+    <!-- Floating panel -->
+    <div
+      class="absolute top-16 right-3 w-56 mobile-menu-panel"
+      :class="{ 'is-closed': !isMobileMenuOpen }"
+    >
+      <div class="bg-white dark:bg-[#181926] rounded-xl shadow-xl border border-black/5 dark:border-white/10 overflow-hidden">
         <RouterLink
           to="/"
           @click="isMobileMenuOpen = false"
-          class="block px-6 py-2.5 text-[0.925rem] font-bold text-black/75 dark:text-white/75 hover:bg-(--primary) hover:text-white transition-colors duration-150"
+          class="flex items-center gap-3 px-4 py-3 text-sm font-bold text-black/75 dark:text-white/75 hover:bg-(--primary) hover:text-white transition-colors"
         >
           首页
         </RouterLink>
+        <div class="h-px bg-black/5 dark:bg-white/5" />
         <RouterLink
           v-for="link in otherNavLinks"
           :key="link.path"
           :to="link.path"
           @click="isMobileMenuOpen = false"
-          class="block px-6 py-2.5 text-[0.925rem] font-bold text-black/75 dark:text-white/75 hover:bg-(--primary) hover:text-white router-link-exact-active:bg-(--primary) router-link-exact-active:text-white transition-colors duration-150"
+          class="flex items-center gap-3 px-4 py-3 text-sm font-bold text-black/75 dark:text-white/75 hover:bg-(--primary) hover:text-white router-link-exact-active:bg-(--primary) router-link-exact-active:text-white transition-colors"
         >
           {{ link.label }}
+          <svg class="w-4 h-4 ml-auto opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
         </RouterLink>
       </div>
-    </Transition>
-
-  </header>
+    </div>
+  </div>
 
   <!-- Settings Panel (outside header to avoid transform / stacking issues) -->
   <SettingsPanel
@@ -185,13 +207,18 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.mobile-menu-enter-active,
-.mobile-menu-leave-active {
-  transition: all 0.25s ease;
+/* Mizuki-style mobile menu panel animation */
+.mobile-menu-panel {
+  transform-origin: top right;
+  transition: transform 0.15s ease-out, opacity 0.15s ease-out;
 }
-.mobile-menu-enter-from,
-.mobile-menu-leave-to {
+.mobile-menu-panel.is-closed {
+  transform: scale(0.65, 0);
   opacity: 0;
-  transform: translateY(-10px);
+  pointer-events: none;
+}
+.mobile-menu-panel:not(.is-closed) {
+  transform: scale(1, 1);
+  opacity: 1;
 }
 </style>
