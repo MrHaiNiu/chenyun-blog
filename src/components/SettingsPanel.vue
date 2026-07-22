@@ -220,26 +220,6 @@
               />
             </div>
 
-            <!-- Navbar glass blur toggle (Mizuki-style) — NEW -->
-            <button
-              class="w-full rounded-lg py-2.5 px-3 flex items-center gap-3 text-left active:scale-[0.98] transition-all bg-slate-100 dark:bg-slate-700/50"
-              :class="{ 'bg-slate-200 dark:bg-slate-600/50': themeStore.navbarBlur }"
-              @click="toggleNavbarBlur"
-            >
-              <svg class="w-[1.125rem] h-[1.125rem] shrink-0 opacity-80 text-slate-500 dark:text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              <span class="text-xs font-bold flex-1 text-slate-700 dark:text-slate-300">导航栏毛玻璃</span>
-              <div
-                class="w-10 h-[22px] rounded-full transition-all duration-200 relative shrink-0"
-                :class="themeStore.navbarBlur ? 'bg-(--primary)' : 'bg-slate-300 dark:bg-slate-600'"
-              >
-                <div
-                  class="absolute top-[3px] w-4 h-4 bg-white rounded-full shadow-sm transition-all duration-200"
-                  :class="themeStore.navbarBlur ? 'left-[23px]' : 'left-[3px]'"
-                />
-              </div>
-            </button>
           </div>
         </section>
 
@@ -315,7 +295,6 @@ function onBannerHeightChange() { themeStore.setBannerHeight(localBannerHeight.v
 function setLayout(mode: 'sidebar' | 'full') { themeStore.setLayoutMode(mode) }
 function onPageWidthChange() { themeStore.setPageWidth(localPageWidth.value) }
 function onCardRadiusChange() { themeStore.setCardRadius(localCardRadius.value) }
-function toggleNavbarBlur() { themeStore.setNavbarBlur(!themeStore.navbarBlur) }
 function toggleWaves() {
   wavesEnabled.value = !wavesEnabled.value
   localStorage.setItem('blog-waves-enabled', `${wavesEnabled.value}`)

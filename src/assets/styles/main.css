@@ -14,6 +14,8 @@
     --primary-bg: hsla(var(--hue), 70%, 55%, 0.1);
     --primary-bg-softer: hsla(var(--hue), 70%, 55%, 0.2);
     --primary-border: hsla(var(--hue), 70%, 55%, 0.3);
+    --btn-plain-bg-hover: hsla(var(--hue), 70%, 55%, 0.1);
+    --btn-plain-bg-active: hsla(var(--hue), 70%, 55%, 0.15);
   }
 
   body {
