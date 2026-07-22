@@ -22,12 +22,16 @@
       <SearchBar />
     </div>
 
-    <!-- Banner title -->
+    <!-- Banner title (theme color aware) -->
     <div class="relative z-10 text-center px-4 mb-4">
-      <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-white drop-shadow-lg mb-2 lg:mb-4 tracking-wider">
+      <h1 class="text-5xl md:text-7xl lg:text-8xl font-black drop-shadow-lg mb-2 lg:mb-4 tracking-wider"
+        :style="{ color: themeStore.isDark ? 'var(--primary)' : '#ffffff' }"
+      >
         Chenyun
       </h1>
-      <p class="text-lg md:text-2xl text-white/90 drop-shadow-md font-serif tracking-widest">
+      <p class="text-lg md:text-2xl drop-shadow-md font-serif tracking-widest"
+        :style="{ color: themeStore.isDark ? 'color-mix(in srgb, var(--primary) 80%, white)' : 'rgba(255,255,255,0.9)' }"
+      >
         の 宝藏之地
       </p>
     </div>
