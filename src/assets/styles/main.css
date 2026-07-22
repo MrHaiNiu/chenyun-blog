@@ -1,0 +1,318 @@
+@import "tailwindcss";
+@import "highlight.js/styles/atom-one-dark.css";
+@import "katex/dist/katex.min.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
+    --hue: 240;
+    --primary: hsl(var(--hue), 70%, 55%);
+    --primary-light: hsl(var(--hue), 70%, 65%);
+    --primary-dark: hsl(var(--hue), 70%, 45%);
+    --primary-bg: hsla(var(--hue), 70%, 55%, 0.1);
+    --primary-bg-softer: hsla(var(--hue), 70%, 55%, 0.2);
+    --primary-border: hsla(var(--hue), 70%, 55%, 0.3);
+  }
+
+  body {
+    font-family: var(--font-serif);
+    @apply transition-colors duration-500 text-slate-900 bg-slate-50;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .dark body {
+    @apply text-slate-100 bg-slate-950;
+  }
+
+  h1, h2, h3, h4 {
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+
+  .dark .prose {
+    --tw-prose-body: var(--color-slate-200);
+    --tw-prose-headings: var(--color-white);
+    --tw-prose-links: var(--primary-light);
+  }
+
+  /* Performance: reduce backdrop-blur cost */
+  [class*="backdrop-blur"] {
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    transform: translateZ(0);
+  }
+
+  html, body {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Global scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsla(var(--hue, 240), 70%, 55%, 0.3);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsla(var(--hue, 240), 70%, 55%, 0.8);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsla(var(--hue, 240), 70%, 55%, 0.3) transparent;
+}
+
+/* ============ Performance Optimizations ============ */
+/* GPU acceleration for animated elements */
+img, .animate-spin, .animate-pulse, [class*="animate-"] {
+  will-change: transform, opacity;
+}
+
+/* Use transform instead of top/left for positioning animations */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  will-change: opacity, transform;
+}
+
+/* ============ Keyframe Animations ============ */
+@keyframes fireflyBreathe {
+  0%, 100% { opacity: 0; transform: scale(0.5); box-shadow: 0 0 0 0 rgba(200,255,200,0); }
+  50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 8px 2px rgba(200,255,200,0.8); }
+}
+
+@keyframes fireflyFloatA {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(30px, -40px); }
+  50% { transform: translate(-20px, -80px); }
+  75% { transform: translate(40px, -30px); }
+}
+@keyframes fireflyFloatB {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-40px, 30px); }
+  50% { transform: translate(50px, 60px); }
+  75% { transform: translate(-30px, 40px); }
+}
+@keyframes fireflyFloatC {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(20px, 50px); }
+  50% { transform: translate(-40px, -20px); }
+  75% { transform: translate(30px, -50px); }
+}
+@keyframes fireflyFloatD {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-30px, -30px); }
+  50% { transform: translate(40px, -60px); }
+  75% { transform: translate(-50px, 20px); }
+}
+
+@keyframes sakuraFall {
+  0% { transform: translate(0, -10vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translate(15vw, 110vh) rotate(360deg); opacity: 0; }
+}
+
+@keyframes float-left {
+  0% { right: -100%; transform: translateX(100%); }
+  100% { right: 100%; transform: translateX(-100%); }
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.animate-cursor {
+  animation: cursor-blink 1s infinite;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInOut {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ============ Wave Animation ============ */
+@keyframes wave-move {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.wave-svg {
+  animation: wave-move 12s linear infinite;
+  will-change: transform;
+}
+
+.wave-svg-2 {
+  animation: wave-move 18s linear infinite reverse;
+  will-change: transform;
+}
+
+.wave-svg-3 {
+  animation: wave-move 24s linear infinite;
+  will-change: transform;
+}
+
+/* ============ Page Transitions ============ */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(15px);
+}
+
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-15px);
+}
+
+/* Toast animation */
+.toast-enter-active,
+.toast-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toast-enter-from {
+  opacity: 0;
+  transform: translate(-50%, -50px) scale(0.9);
+}
+
+.toast-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -50px) scale(0.9);
+}
+
+/* Splash screen */
+.splash-exit {
+  animation: splashExit 0.6s ease-in forwards;
+}
+
+@keyframes splashExit {
+  to {
+    opacity: 0;
+    transform: scale(1.05);
+    pointer-events: none;
+  }
+}
+
+/* ============ Article prose styling ============ */
+.prose pre {
+  @apply rounded-xl;
+}
+
+.prose code::before,
+.prose code::after {
+  content: none;
+}
+
+.prose code {
+  @apply px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 font-mono text-sm;
+  color: var(--primary);
+}
+
+.prose pre code {
+  @apply bg-transparent p-0 text-sm text-inherit;
+}
+
+.prose img {
+  @apply rounded-2xl shadow-lg;
+}
+
+.prose a {
+  color: var(--primary);
+}
+
+.prose a:hover {
+  text-decoration: underline;
+}
+
+.prose blockquote {
+  border-left: 4px solid var(--primary);
+  @apply pl-4 italic text-slate-600 dark:text-slate-400;
+}
+
+.prose table {
+  @apply w-full border-collapse;
+}
+
+.prose th,
+.prose td {
+  @apply border border-slate-300 dark:border-slate-700 px-4 py-2;
+}
+
+.prose th {
+  @apply bg-slate-100 dark:bg-slate-800 font-bold;
+}
+
+/* ============ Hue-Driven Accent Utilities ============ */
+.text-accent { color: var(--primary); }
+.text-accent-light { color: var(--primary-light); }
+.text-accent-dark { color: var(--primary-dark); }
+.bg-accent-soft { background-color: var(--primary-bg); }
+.bg-accent-softer { background-color: var(--primary-bg-softer); }
+.bg-accent { background-color: var(--primary); }
+.bg-accent\/90 { background-color: hsla(var(--hue, 240), 70%, 55%, 0.9); }
+.border-accent { border-color: var(--primary); }
+.hover\:text-accent:hover { color: var(--primary); }
+.hover\:bg-accent:hover { background-color: var(--primary); }
+.group:hover .group-hover\:text-accent { color: var(--primary); }
+.group:hover .group-hover\:text-accent-light { color: var(--primary-light); }
+.bg-accent-mid { background-color: hsla(var(--hue, 240), 70%, 55%, 0.3); }
+.border-accent-light { border-color: var(--primary-light); }
+.hover\:bg-accent-dark:hover { background-color: var(--primary-dark); }
+.hover\:text-accent-dark:hover { color: var(--primary-dark); }
+
+/* ============ Top Gradient Highlight (Mizuki-inspired) ============ */
+.top-gradient-highlight {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  pointer-events: none;
+  z-index: 15;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.15) 40%,
+    transparent 100%
+  );
+}
+.dark .top-gradient-highlight {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0.12) 40%,
+    transparent 100%
+  );
+}

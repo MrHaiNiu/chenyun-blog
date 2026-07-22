@@ -1,0 +1,89 @@
+export interface NavLink {
+  name: string
+  href: string
+}
+
+export interface SocialLink {
+  type: string
+  url?: string
+  onClick?: string
+}
+
+export interface IcpConfig {
+  name: string
+  link: string
+}
+
+export interface SiteConfig {
+  title: string
+  faviconUrl: string
+  authorName: string
+  bio: string
+  navTitle: string
+  navSuffix: string
+  navAfter: string
+  avatarUrl: string
+  useGradient: boolean
+  themeColors: string[]
+  bgImages: string[]
+  defaultPostCover: string
+  socialLinks: SocialLink[]
+  navLinks: NavLink[]
+  icpConfig: IcpConfig
+  friendLinkApplyFormat: string
+  enableLevelSystem: boolean
+  buildDate: string
+  danmakuList: string[]
+}
+
+export const siteConfig: SiteConfig = {
+  title: 'XingHuiSama の 宝藏之地',
+  faviconUrl: 'https://bu.dusays.com/2026/03/24/69c1e38ac1846.jpg',
+  authorName: 'XingHuiSama',
+  bio: '在代码、学术与分子动力学模拟间穿梭的普通人。近期正埋头于 GROMACS 模拟研究与神经网络计算。',
+  navTitle: 'XingHuiSama',
+  navSuffix: 'の',
+  navAfter: '宝藏之地',
+  avatarUrl: 'https://bu.dusays.com/2026/03/24/69c1e38ac1846.jpg',
+  useGradient: false,
+  themeColors: ['#a18cd1', '#fbc2eb', '#a1c4fd', '#c2e9fb'],
+  bgImages: [
+    'https://bu.dusays.com/2026/03/24/69c1e38b4c370.jpg',
+    'https://bu.dusays.com/2026/03/24/69c26fe4acdb5.jpg',
+    'https://bu.dusays.com/2026/03/24/69c1e38b346cb.jpg',
+  ],
+  defaultPostCover: 'https://bu.dusays.com/2026/03/24/69c1e38b346cb.jpg',
+  socialLinks: [
+    { type: 'github', url: 'https://github.com/heiehiehi' },
+    { type: 'email', url: 'mailto:contact@xinghuisama.top' },
+    { type: 'wechat' },
+  ],
+  navLinks: [
+    { name: '首页', href: '/' },
+    { name: '项目', href: '/projects' },
+    { name: '归档', href: '/timeline' },
+    { name: '照片墙', href: '/gallery' },
+    { name: '音乐', href: '/music' },
+    { name: '说说', href: '/chatter' },
+    { name: '友链', href: '/friends' },
+    { name: '关于', href: '/about' },
+  ],
+  icpConfig: {
+    name: '萌ICP备 20260240号',
+    link: 'https://icp.gov.moe/?keyword=20260240',
+  },
+  friendLinkApplyFormat:
+    '名称：XingHuiSamaの宝藏之地\n简介：今天我也要学习吗\n链接：https://www.xinghuisama.top\n头像：https://bu.dusays.com/2026/03/24/69c1e38ac1846.jpg',
+  enableLevelSystem: true,
+  buildDate: '2026-03-23T00:00:00',
+  danmakuList: [
+    '欢迎来到宝藏之地！',
+    '代码改变世界',
+    '愿你历尽千帆，归来仍是少年',
+    'Stay hungry, Stay foolish',
+    '在代码与学术间穿梭',
+    'GROMACS 模拟研究',
+    '每一个bug都是成长的契机',
+    'Hello World!',
+  ],
+}

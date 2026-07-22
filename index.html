@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="h-full antialiased">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="https://bu.dusays.com/2026/03/24/69c1e38ac1846.jpg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>XingHuiSama の 宝藏之地</title>
+    <script>
+      try {
+        if (sessionStorage.getItem('hasSeenSplash') === 'true') {
+          document.documentElement.classList.add('splash-seen');
+        }
+      } catch (e) {}
+    </script>
+    <style>
+      #app { opacity: 0; visibility: hidden; pointer-events: none; }
+      html.splash-seen #app { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
+    </style>
+  </head>
+  <body class="w-screen overflow-x-hidden min-h-full flex flex-col relative transition-colors duration-1000 bg-slate-50 dark:bg-slate-950">
+    <div id="app" class="flex-1 flex flex-col transition-opacity duration-1000"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
