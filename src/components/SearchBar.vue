@@ -121,7 +121,7 @@
 
 <script setup lang="ts">
 import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
-import { getAllPosts } from '@/utils/markdown'
+import { fetchArchivesPosts } from '@/utils/markdown'
 import type { PostMeta } from '@/types'
 
 export interface SearchResultItem {
@@ -144,7 +144,7 @@ const props = withDefaults(defineProps<{
   searchFn: undefined,
 })
 
-const posts = getAllPosts()
+const posts = ref<PostMeta[]>([])
 const isSearchOpen = ref(false)
 const searchQuery = ref('')
 const searchInputRef = ref<HTMLInputElement>()
@@ -155,7 +155,7 @@ const inlineResultsVisible = ref(false)
 const searchResults = computed<PostMeta[]>(() => {
   if (!searchQuery.value.trim()) return []
   const q = searchQuery.value.toLowerCase()
-  return posts.filter(p =>
+  return posts.value.filter(p =>
     p.title.toLowerCase().includes(q) ||
     p.description.toLowerCase().includes(q) ||
     p.tags.some(t => t.toLowerCase().includes(q))
@@ -202,8 +202,11 @@ function handleKeydown(e: KeyboardEvent) {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   window.addEventListener('keydown', handleKeydown)
+  if (!props.inline) {
+    posts.value = await fetchArchivesPosts()
+  }
 })
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown)

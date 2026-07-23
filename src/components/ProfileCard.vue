@@ -97,7 +97,7 @@ const socialLinks = computed(() =>
     ...link,
     onClick: link.type === 'wechat' ? (e: Event) => {
       e.preventDefault()
-      navigator.clipboard.writeText('contact@xinghuisama.top')
+      navigator.clipboard.writeText('g2875135523')
       toastStore.showToast('✨ 微信已复制到剪贴板', 'success')
     } : undefined,
   }))

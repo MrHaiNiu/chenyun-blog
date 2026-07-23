@@ -38,13 +38,13 @@ export interface SiteConfig {
 
 export const siteConfig: SiteConfig = {
   title: 'Chenyun の 宝藏之地',
-  faviconUrl: 'https://bu.dusays.com/2026/03/24/69c1e38ac1846.jpg',
+  faviconUrl: 'http://47.95.204.9/logo.png',
   authorName: 'Chenyun',
   bio: '在代码、学术与分子动力学模拟间穿梭的普通人。近期正埋头于 GROMACS 模拟研究与神经网络计算。',
   navTitle: 'Chenyun',
   navSuffix: 'の',
   navAfter: '宝藏之地',
-  avatarUrl: 'https://bu.dusays.com/2026/03/24/69c1e38ac1846.jpg',
+  avatarUrl: 'http://47.95.204.9/logo.png',
   useGradient: false,
   themeColors: ['#a18cd1', '#fbc2eb', '#a1c4fd', '#c2e9fb'],
   bgImages: [
@@ -54,7 +54,7 @@ export const siteConfig: SiteConfig = {
   ],
   defaultPostCover: 'https://bu.dusays.com/2026/03/24/69c1e38b346cb.jpg',
   socialLinks: [
-    { type: 'github', url: 'https://github.com/heiehiehi' },
+    { type: 'github', url: 'https://github.com/MrHaiNiu/chenyun-blog' },
     { type: 'email', url: 'mailto:contact@xinghuisama.top' },
     { type: 'wechat' },
   ],
@@ -73,7 +73,7 @@ export const siteConfig: SiteConfig = {
     link: 'https://icp.gov.moe/?keyword=20260240',
   },
   friendLinkApplyFormat:
-    '名称：Chenyunの宝藏之地\n简介：今天我也要学习吗\n链接：https://www.xinghuisama.top\n头像：https://bu.dusays.com/2026/03/24/69c1e38ac1846.jpg',
+    '名称：Chenyunの宝藏之地\n简介：今天我也要学习吗\n链接：https://www.xinghuisama.top\n头像：http://47.95.204.9/logo.png',
   enableLevelSystem: true,
   buildDate: '2026-03-23T00:00:00',
   danmakuList: [

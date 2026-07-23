@@ -62,8 +62,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { getAllPosts } from '@/utils/markdown'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { fetchArchivesPosts } from '@/utils/markdown'
+import type { PostMeta } from '@/types'
 import { albums } from '@/data/albums'
 import { friendsData } from '@/data/friends'
 import { useThemeStore } from '@/stores/theme'
@@ -81,19 +82,42 @@ import CategoriesCard from '@/components/CategoriesCard.vue'
 import SiteInfoCard from '@/components/SiteInfoCard.vue'
 
 const themeStore = useThemeStore()
-const posts = getAllPosts()
+const posts = ref<PostMeta[]>([])
 const photoCount = computed(() => albums.reduce((sum, a) => sum + a.photos.length, 0))
 
 const POSTS_PER_PAGE = 4
 const currentPage = ref(1)
-const totalPages = computed(() => Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE)))
+const totalPages = computed(() => Math.max(1, Math.ceil(posts.value.length / POSTS_PER_PAGE)))
 const paginatedPosts = computed(() => {
   const start = (currentPage.value - 1) * POSTS_PER_PAGE
-  return posts.slice(start, start + POSTS_PER_PAGE)
+  return posts.value.slice(start, start + POSTS_PER_PAGE)
 })
 
 function onPageChange(page: number) {
   currentPage.value = page
   window.scrollTo({ top: 300, behavior: 'smooth' })
 }
+
+function postsHaveChanged(a: PostMeta[], b: PostMeta[]): boolean {
+  if (a.length !== b.length) return true
+  const slugsA = a.map(p => p.slug).sort().join(',')
+  const slugsB = b.map(p => p.slug).sort().join(',')
+  return slugsA !== slugsB
+}
+
+let pollTimer: ReturnType<typeof setInterval> | null = null
+
+onMounted(async () => {
+  posts.value = await fetchArchivesPosts()
+  pollTimer = setInterval(async () => {
+    const fresh = await fetchArchivesPosts()
+    if (postsHaveChanged(posts.value, fresh)) {
+      posts.value = fresh
+    }
+  }, 3000)
+})
+
+onUnmounted(() => {
+  if (pollTimer) clearInterval(pollTimer)
+})
 </script>

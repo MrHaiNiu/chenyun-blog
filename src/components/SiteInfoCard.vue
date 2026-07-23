@@ -80,23 +80,47 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { siteConfig } from '@/siteConfig'
-import { getAllPosts } from '@/utils/markdown'
+import { fetchArchivesPosts } from '@/utils/markdown'
+import type { PostMeta } from '@/types'
 
 const collapsed = ref(true)
 
-const posts = getAllPosts()
-const postCount = posts.length
+const posts = ref<PostMeta[]>([])
+const postCount = computed(() => posts.value.length)
 
 const categoryCount = computed(() => {
   const tags = new Set<string>()
-  for (const post of posts) {
+  for (const post of posts.value) {
     for (const tag of post.tags) {
       tags.add(tag)
     }
   }
   return tags.size
+})
+
+function postsHaveChanged(a: PostMeta[], b: PostMeta[]): boolean {
+  if (a.length !== b.length) return true
+  const slugsA = a.map(p => p.slug).sort().join(',')
+  const slugsB = b.map(p => p.slug).sort().join(',')
+  return slugsA !== slugsB
+}
+
+let pollTimer: ReturnType<typeof setInterval> | null = null
+
+onMounted(async () => {
+  posts.value = await fetchArchivesPosts()
+  pollTimer = setInterval(async () => {
+    const fresh = await fetchArchivesPosts()
+    if (postsHaveChanged(posts.value, fresh)) {
+      posts.value = fresh
+    }
+  }, 3000)
+})
+
+onUnmounted(() => {
+  if (pollTimer) clearInterval(pollTimer)
 })
 
 const buildDate = siteConfig.buildDate

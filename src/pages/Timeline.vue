@@ -36,8 +36,16 @@
               </div>
             </div>
 
+            <!-- Loading state -->
+            <div v-if="loading" class="flex items-center justify-center py-20">
+              <div class="flex flex-col items-center gap-3">
+                <div class="w-8 h-8 border-3 border-accent border-t-transparent rounded-full animate-spin" />
+                <p class="text-sm text-slate-400">加载中...</p>
+              </div>
+            </div>
+
             <!-- Tags row -->
-            <div v-if="tags.length > 0" class="flex flex-wrap gap-2 mb-4">
+            <div v-if="!loading && tags.length > 0" class="flex flex-wrap gap-2 mb-4">
               <button
                 @click="selectedTag = ''"
                 :class="selectedTag === '' ? 'bg-accent text-white' : 'bg-glass-50 text-slate-700 dark:text-slate-300'"
@@ -56,9 +64,21 @@
               </button>
             </div>
 
-            <!-- View mode toggle -->
+            <!-- View mode toggle + sort -->
             <div class="flex justify-end mb-6">
               <div class="flex gap-2 p-1 bg-glass-50 rounded-xl border border-white/40 dark:border-white/10">
+                <!-- Sort toggle -->
+                <button
+                  @click="sortAscending = !sortAscending"
+                  class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-bold transition-all"
+                  :class="sortAscending ? 'bg-accent text-white shadow-md' : 'text-slate-500 hover:text-accent'"
+                  :title="sortAscending ? '从新到旧' : '从旧到新'"
+                >
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
+                  </svg>
+                </button>
+                <div class="w-px bg-slate-200 dark:bg-slate-600/50" />
                 <button
                   @click="viewMode = 'timeline'"
                   :class="viewMode === 'timeline' ? 'bg-accent text-white shadow-md' : 'text-slate-500 hover:text-accent'"
@@ -182,8 +202,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { getAllPosts } from '@/utils/markdown'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { fetchArchivesPosts } from '@/utils/markdown'
+import type { PostMeta } from '@/types'
 import { siteConfig } from '@/siteConfig'
 import { useThemeStore } from '@/stores/theme'
 import BackButton from '@/components/BackButton.vue'
@@ -199,13 +220,43 @@ import FooterBar from '@/components/FooterBar.vue'
 import type { SearchResultItem } from '@/components/SearchBar.vue'
 
 const themeStore = useThemeStore()
-const posts = getAllPosts()
+const posts = ref<PostMeta[]>([])
+const loading = ref(true)
+
+/** 检查 posts 列表是否发生了变化（基于 slug 列表） */
+function postsHaveChanged(a: PostMeta[], b: PostMeta[]): boolean {
+  if (a.length !== b.length) return true
+  const slugsA = a.map(p => p.slug).sort().join(',')
+  const slugsB = b.map(p => p.slug).sort().join(',')
+  return slugsA !== slugsB
+}
+
+let pollTimer: ReturnType<typeof setInterval> | null = null
+
+onMounted(async () => {
+  posts.value = await fetchArchivesPosts()
+  loading.value = false
+
+  // 每 3 秒轮询一次，检测 Archives 是否有新增/删除的文件
+  pollTimer = setInterval(async () => {
+    const fresh = await fetchArchivesPosts()
+    if (postsHaveChanged(posts.value, fresh)) {
+      posts.value = fresh
+    }
+  }, 3000)
+})
+
+onUnmounted(() => {
+  if (pollTimer) clearInterval(pollTimer)
+})
+
 const selectedTag = ref('')
 const viewMode = ref<'timeline' | 'grid'>('timeline')
+const sortAscending = ref(false)
 
 const tags = computed(() => {
   const counts: Record<string, number> = {}
-  posts.forEach((p) => {
+  posts.value.forEach((p) => {
     p.tags.forEach((t) => {
       counts[t] = (counts[t] || 0) + 1
     })
@@ -216,13 +267,22 @@ const tags = computed(() => {
 })
 
 const filteredPosts = computed(() => {
-  if (!selectedTag.value) return posts
-  return posts.filter((p) => p.tags.includes(selectedTag.value))
+  let result = posts.value
+  if (selectedTag.value) {
+    result = posts.value.filter((p) => p.tags.includes(selectedTag.value))
+  }
+  let sorted = [...result]
+  if (sortAscending.value) {
+    sorted.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+  } else {
+    sorted.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  }
+  return sorted
 })
 
 function searchPosts(query: string): SearchResultItem[] {
   const q = query.toLowerCase()
-  return posts
+  return posts.value
     .filter(p =>
       p.title.toLowerCase().includes(q) ||
       p.description.toLowerCase().includes(q) ||

@@ -34,6 +34,18 @@
       <!-- View mode toggle (separate row, right-aligned) -->
       <div class="flex justify-end mb-6">
         <div class="flex gap-2 p-1 bg-glass-50 rounded-xl border border-white/40 dark:border-white/10">
+          <!-- Sort toggle -->
+          <button
+            @click="sortAscending = !sortAscending"
+            class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-bold transition-all"
+            :class="sortAscending ? 'bg-accent text-white shadow-md' : 'text-slate-500 hover:text-accent'"
+            :title="sortAscending ? '从新到旧' : '从旧到新'"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
+            </svg>
+          </button>
+          <div class="w-px bg-slate-200 dark:bg-slate-600/50" />
           <button
             @click="viewMode = 'timeline'"
             :class="viewMode === 'timeline' ? 'bg-accent text-white shadow-md' : 'text-slate-500 hover:text-accent'"
@@ -154,6 +166,7 @@ import type { SearchResultItem } from '@/components/SearchBar.vue'
 
 const selectedTag = ref('')
 const viewMode = ref<'timeline' | 'grid'>('grid')
+const sortAscending = ref(false)
 
 const tags = computed(() => {
   const counts: Record<string, number> = {}
@@ -168,8 +181,15 @@ const tags = computed(() => {
 })
 
 const filteredProjects = computed(() => {
-  if (!selectedTag.value) return projectsData
-  return projectsData.filter((p) => p.tags.includes(selectedTag.value))
+  let result = projectsData
+  if (selectedTag.value) {
+    result = projectsData.filter((p) => p.tags.includes(selectedTag.value))
+  }
+  let sorted = [...result]
+  if (sortAscending.value) {
+    sorted.reverse()
+  }
+  return sorted
 })
 
 function searchProjects(query: string): SearchResultItem[] {

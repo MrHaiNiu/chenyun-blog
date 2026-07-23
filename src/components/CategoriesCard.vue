@@ -29,10 +29,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { getAllPosts } from '@/utils/markdown'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { fetchArchivesPosts } from '@/utils/markdown'
+import type { PostMeta } from '@/types'
 
-const posts = getAllPosts()
+const posts = ref<PostMeta[]>([])
 
 interface Category {
   name: string
@@ -41,7 +42,7 @@ interface Category {
 
 const categories = computed<Category[]>(() => {
   const map = new Map<string, number>()
-  for (const post of posts) {
+  for (const post of posts.value) {
     for (const tag of post.tags) {
       map.set(tag, (map.get(tag) || 0) + 1)
     }
@@ -49,5 +50,28 @@ const categories = computed<Category[]>(() => {
   return Array.from(map.entries())
     .map(([name, count]) => ({ name, count }))
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
+})
+
+function postsHaveChanged(a: PostMeta[], b: PostMeta[]): boolean {
+  if (a.length !== b.length) return true
+  const slugsA = a.map(p => p.slug).sort().join(',')
+  const slugsB = b.map(p => p.slug).sort().join(',')
+  return slugsA !== slugsB
+}
+
+let pollTimer: ReturnType<typeof setInterval> | null = null
+
+onMounted(async () => {
+  posts.value = await fetchArchivesPosts()
+  pollTimer = setInterval(async () => {
+    const fresh = await fetchArchivesPosts()
+    if (postsHaveChanged(posts.value, fresh)) {
+      posts.value = fresh
+    }
+  }, 3000)
+})
+
+onUnmounted(() => {
+  if (pollTimer) clearInterval(pollTimer)
 })
 </script>

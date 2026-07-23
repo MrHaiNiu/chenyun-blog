@@ -6,8 +6,18 @@
       <h3 class="text-lg md:text-xl font-black text-slate-800 dark:text-white tracking-widest uppercase">
         最新文章
       </h3>
+      <!-- Sort toggle -->
+      <button
+        @click="sortAscending = !sortAscending"
+        class="p-1.5 rounded-lg transition-all duration-200 text-slate-400 dark:text-slate-500 hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800"
+        :title="sortAscending ? '从新到旧' : '从旧到新'"
+      >
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
+        </svg>
+      </button>
       <!-- List/Grid toggle -->
-      <div class="flex gap-1 p-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 ml-2">
+      <div class="flex gap-1 p-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
         <button
           @click="isGrid = false"
           class="p-1.5 rounded-md transition-all duration-200"
@@ -74,10 +84,17 @@ const props = defineProps<{ posts: PostMeta[]; maxCount?: number }>()
 const router = useRouter()
 
 const isGrid = ref(false)
+const sortAscending = ref(false)
 
-const displayPosts = computed(() =>
-  props.posts.slice(0, props.maxCount || 8)
-)
+const displayPosts = computed(() => {
+  let sorted = [...props.posts]
+  if (sortAscending.value) {
+    sorted.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+  } else {
+    sorted.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  }
+  return sorted.slice(0, props.maxCount || 8)
+})
 
 function goToPost(slug: string) {
   router.push(`/posts/${slug}`)

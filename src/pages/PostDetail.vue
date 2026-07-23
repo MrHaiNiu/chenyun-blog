@@ -102,8 +102,8 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
-import { getPostBySlug, renderMarkdown } from '@/utils/markdown'
-import type { TocItem } from '@/types'
+import { renderMarkdown, fetchArchivePostBySlug } from '@/utils/markdown'
+import type { PostMeta, TocItem } from '@/types'
 import { useToastStore } from '@/stores/toast'
 import BackButton from '@/components/BackButton.vue'
 import ProfileCard from '@/components/ProfileCard.vue'
@@ -111,13 +111,13 @@ import ProfileCard from '@/components/ProfileCard.vue'
 const route = useRoute()
 const toastStore = useToastStore()
 
-const post = ref(getPostBySlug(route.params.slug as string))
+const post = ref<PostMeta | undefined>(undefined)
 const htmlContent = ref('')
 const toc = ref<TocItem[]>([])
 
 async function loadPost() {
   const slug = route.params.slug as string
-  post.value = getPostBySlug(slug)
+  post.value = (await fetchArchivePostBySlug(slug)) ?? undefined
 
   if (post.value?.content) {
     const result = await renderMarkdown(post.value.content)

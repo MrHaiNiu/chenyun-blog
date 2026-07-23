@@ -57,46 +57,80 @@ function parseFrontmatter(raw: string): { data: Record<string, any>; content: st
   return { data, content }
 }
 
-// Glob import all markdown files eagerly
-const mdModules = import.meta.glob('/posts/*.md', {
-  query: '?raw',
-  import: 'default',
-  eager: true,
-})
-
+/**
+ * @deprecated 已废弃 — 使用 fetchArchivesPosts() 替代
+ * 保留此函数仅作为兼容引用。
+ */
 export function getAllPosts(): PostMeta[] {
-  const posts: PostMeta[] = []
+  return []
+}
 
-  for (const [path, raw] of Object.entries(mdModules)) {
-    const slug = path.split('/').pop()!.replace(/\.md$/, '')
-    const { data, content } = parseFrontmatter(raw as string)
+export function getPostBySlug(_slug: string): PostMeta | undefined {
+  return undefined
+}
 
-    posts.push({
-      slug,
-      title: data.title || '无标题',
-      date: data.date || '1970-01-01',
-      description: data.description || '',
-      tags: Array.isArray(data.tags) ? data.tags : [],
-      cover: data.cover || '',
-      mood: data.mood || '',
-      content,
-    })
+export function getRecentPosts(_count: number = 5): PostMeta[] {
+  return []
+}
+
+// ====== Async fetch functions for runtime-loaded posts (public/Archives/) ======
+
+/**
+ * Fetch all posts from public/Archives/ via runtime fetch().
+ * Reads config.json first, then fetches each enabled .md file.
+ */
+export async function fetchArchivesPosts(): Promise<PostMeta[]> {
+  /** 添加时间戳避免浏览器缓存 */
+  const cacheBust = () => `?t=${Date.now()}`
+
+  let config: { files: Array<{ filename: string; enabled: boolean; cover: string }> }
+  try {
+    const resp = await fetch(`/Archives/config.json${cacheBust()}`)
+    if (!resp.ok) return []
+    config = await resp.json()
+  } catch {
+    return []
   }
 
-  posts.sort((a, b) => {
-    const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime()
-    return dateDiff !== 0 ? dateDiff : b.slug.localeCompare(a.slug)
-  })
+  const enabledFiles = config.files.filter((f) => f.enabled)
+
+  const posts = await Promise.all(
+    enabledFiles.map(async (entry) => {
+      try {
+        const rawResp = await fetch(`/Archives/${encodeURIComponent(entry.filename)}${cacheBust()}`)
+        const raw = await rawResp.text()
+        const { data, content } = parseFrontmatter(raw)
+        const slug = entry.filename.replace(/\.md$/, '')
+        return {
+          slug,
+          title: data.title || '无标题',
+          date: data.date || '1970-01-01',
+          description: data.description || '',
+          tags: Array.isArray(data.tags) ? data.tags : [],
+          cover: entry.cover || data.cover || '',
+          mood: data.mood || '',
+          content,
+        } as PostMeta
+      } catch {
+        return null
+      }
+    }),
+  )
 
   return posts
+    .filter((p): p is PostMeta => p !== null)
+    .sort((a, b) => {
+      const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime()
+      return dateDiff !== 0 ? dateDiff : b.slug.localeCompare(a.slug)
+    })
 }
 
-export function getPostBySlug(slug: string): PostMeta | undefined {
-  return getAllPosts().find((p) => p.slug === slug)
-}
-
-export function getRecentPosts(count: number = 5): PostMeta[] {
-  return getAllPosts().slice(0, count)
+/**
+ * Fetch a single archive post by slug.
+ */
+export async function fetchArchivePostBySlug(slug: string): Promise<PostMeta | null> {
+  const posts = await fetchArchivesPosts()
+  return posts.find((p) => p.slug === slug) || null
 }
 
 export async function renderMarkdown(content: string): Promise<{ html: string; toc: TocItem[] }> {

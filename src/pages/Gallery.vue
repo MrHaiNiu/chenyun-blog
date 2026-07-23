@@ -8,14 +8,25 @@
           <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">相册</h1>
           <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">共 {{ albums.length }} 个相册</p>
         </div>
-        <div class="max-w-sm mt-3 sm:mt-0 sm:ml-4 shrink-0"><SearchBar inline :search-fn="searchAlbums" placeholder="搜索相册..." /></div>
+        <div class="flex items-center gap-2 mt-3 sm:mt-0 sm:ml-4 shrink-0">
+          <button
+            @click="sortAscending = !sortAscending"
+            class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold transition-all border border-white/40 dark:border-white/10"
+            :class="sortAscending ? 'bg-accent text-white shadow-md' : 'bg-glass-50 text-slate-500 hover:text-accent'"
+            :title="sortAscending ? '从新到旧' : '从旧到新'"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
+            </svg>
+          </button>
+          <SearchBar inline :search-fn="searchAlbums" placeholder="搜索相册..." /></div>
       </div>
 
 
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
         <div
-          v-for="(album, i) in albums"
+          v-for="(album, i) in sortedAlbums"
           :key="album.id"
           @click="openAlbum(album)"
           class="group rounded-3xl bg-glass-40 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl cursor-pointer animate-fade-in-up"
@@ -75,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { albums } from '@/data/albums'
 import type { Album } from '@/types'
 import BackButton from '@/components/BackButton.vue'
@@ -83,6 +94,22 @@ import SearchBar from '@/components/SearchBar.vue'
 import type { SearchResultItem } from '@/components/SearchBar.vue'
 
 const selectedAlbum = ref<Album | null>(null)
+const sortAscending = ref(false)
+
+const sortedAlbums = computed(() => {
+  let sorted = [...albums]
+  if (sortAscending.value) {
+    sorted.sort((a, b) => parseAlbumDate(a.date) - parseAlbumDate(b.date))
+  } else {
+    sorted.sort((a, b) => parseAlbumDate(b.date) - parseAlbumDate(a.date))
+  }
+  return sorted
+})
+
+function parseAlbumDate(dateStr: string): number {
+  const parts = dateStr.split('.')
+  return new Date(Number(parts[0]), Number(parts[1] || 1) - 1).getTime()
+}
 
 function openAlbum(album: Album) {
   selectedAlbum.value = album
