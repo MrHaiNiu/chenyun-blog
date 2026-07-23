@@ -22,17 +22,15 @@
       </div>
 
       <!-- Friends grid -->
-      <div v-motion :initial="{ opacity: 0 }" :visibleOnce="{ opacity: 1, transition: { duration: 600 } }" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         <a
           v-for="(friend, i) in friendsData"
           :key="friend.id"
           :href="friend.url"
           target="_blank"
           rel="noopener noreferrer"
-          v-motion
-          :initial="{ opacity: 0, y: 30, scale: 0.9 }"
-          :visibleOnce="{ opacity: 1, y: 0, scale: 1, transition: { duration: 500, delay: i * 100 } }"
-          class="group rounded-3xl bg-glass-40 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl cursor-pointer p-5 flex items-center gap-4"
+          class="group rounded-3xl bg-glass-40 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl cursor-pointer p-5 flex items-center gap-4 animate-fade-in-up"
+          :style="{ animationDelay: `${i * 30}ms` }"
         >
           <img :src="friend.avatar" :alt="friend.name" class="w-16 h-16 rounded-full object-cover border-2 border-white/30 shadow-md" loading="lazy" />
           <div>

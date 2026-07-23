@@ -63,10 +63,9 @@
       <Transition name="search-overlay">
         <div
           v-if="isSearchOpen"
-          class="fixed inset-0 z-[2000] flex items-start justify-center pt-20 px-4"
+          class="fixed inset-0 z-[2000] flex items-start justify-center pt-20 px-4 bg-black/40 backdrop-blur-sm"
           @click.self="closeSearch"
         >
-          <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="closeSearch" />
           <div class="relative w-full max-w-lg bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-white/20 dark:border-white/10 overflow-hidden">
             <!-- Search input -->
             <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-200/50 dark:border-slate-700/50">
@@ -214,7 +213,7 @@ onUnmounted(() => {
 <style scoped>
 .search-overlay-enter-active,
 .search-overlay-leave-active {
-  transition: opacity 0.25s ease;
+  transition: opacity 0.2s ease;
 }
 .search-overlay-enter-from,
 .search-overlay-leave-to {
@@ -223,7 +222,7 @@ onUnmounted(() => {
 
 .inline-results-enter-active,
 .inline-results-leave-active {
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  transition: opacity 0.12s ease, transform 0.12s ease;
 }
 .inline-results-enter-from,
 .inline-results-leave-to {

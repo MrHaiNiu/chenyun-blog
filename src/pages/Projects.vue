@@ -121,10 +121,8 @@
           :href="project.githubUrl"
           target="_blank"
           rel="noopener noreferrer"
-          v-motion
-          :initial="{ opacity: 0, y: 30 }"
-          :visibleOnce="{ opacity: 1, y: 0, transition: { duration: 500, delay: i * 100 } }"
-          class="group rounded-3xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500"
+          class="group rounded-3xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500 animate-fade-in-up"
+          :style="{ animationDelay: `${i * 30}ms` }"
         >
           <div class="p-5">
             <div class="flex items-center gap-3 mb-3">

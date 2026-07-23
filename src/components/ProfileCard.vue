@@ -1,9 +1,6 @@
 <template>
   <div
     class="group relative cursor-pointer overflow-hidden rounded-3xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl transition-all duration-700 hover:scale-[1.02]"
-    v-motion
-    :initial="{ opacity: 0, y: 20 }"
-    :visibleOnce="{ opacity: 1, y: 0, transition: { duration: 600 } }"
   >
     <!-- Gradient glow -->
     <div class="absolute -top-10 -right-10 w-40 h-40 bg-accent-softer dark:bg-accent-light/10 rounded-full blur-3xl group-hover:bg-accent-mid transition-all duration-700" />

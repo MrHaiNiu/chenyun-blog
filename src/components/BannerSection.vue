@@ -1,7 +1,7 @@
 <template>
   <section
     v-if="themeStore.bannerEnabled"
-    class="relative w-full overflow-hidden flex flex-col items-center justify-center"
+    class="relative w-full overflow-hidden flex flex-col items-center justify-center pt-20 md:pt-24"
     :style="{ height: `${themeStore.bannerHeight}vh`, minHeight: '350px' }"
   >
     <!-- Banner background images with Ken Burns zoom -->

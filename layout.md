@@ -215,19 +215,19 @@ function handleScroll() {
 
 | 设置组 | 行号 | 说明 | 本地状态变量 | Store 方法 |
 |--------|------|------|------------|-----------|
-| **壁纸** | L20-61 | URL 输入框 + 默认/应用按钮 | `localWallpaper` | `themeStore.setWallpaper(url)` |
-| **背景颜色** | L64-93 | 6 个预设色块选择 | `localBgThemeId` | `themeStore.setBgThemeId(id)` |
-| **横幅选项** | L96-174 | 显示开关 + 高度滑块 + 波浪开关 | `localBannerHeight`, `wavesEnabled` | `setBannerEnabled`, `setBannerHeight`, 自定义 `toggleWaves` |
-| **主题色** | L177-213 | HSL 色相滑块 (0-360) | `localHue` | `themeStore.setHue(hue)` |
-| **重置全部** | L217-222 | 一键恢复所有默认值 | — | `themeStore.resetSettings()` |
+| **背景颜色** | L20-49 | 7 个预设色块选择 | `localBgThemeId` | `themeStore.setBgThemeId(id)` |
+| **壁纸** | L51-84 | URL 输入框 + 应用按钮 | `localWallpaper` | `themeStore.setWallpaper(url)` |
+| **横幅选项** | L86-164 | 显示开关 + 高度滑块 + 波浪开关 | `localBannerHeight`, `wavesEnabled` | `setBannerEnabled`, `setBannerHeight`, 自定义 `toggleWaves` |
+| **主题色** | L167-205 | HSL 色相滑块 (0-360) | `localHue` | `themeStore.setHue(hue)` |
+| **重置全部** | L207-213 | 一键恢复所有默认值 | — | `themeStore.resetSettings()` |
 
 ### 4.3 每个设置项的重置按钮
 
 每个设置组标题右侧都有一个重置按钮（SVG 循环箭头）：
-- 壁纸重置 (L28-36) → `resetWallpaper()`
-- 背景颜色重置 (L72-80) → `resetBgTheme()`
-- 横幅选项重置 (L104-112) → `resetBanner()`
-- 主题色重置 (L186-193) → `resetHue()`
+- 背景颜色重置 (L28-36) → `resetBgTheme()`
+- 壁纸重置 (L60-68) → `resetWallpaper()`
+- 横幅选项重置 (L95-103) → `resetBanner()`
+- 主题色重置 (L177-184) → `resetHue()`
 
 ### 4.4 背景颜色预设定义（`theme.ts` L71-121）
 
@@ -455,7 +455,7 @@ function goToAbout() {
 
 ## 10. 主题 Store (theme.ts)
 
-**文件**: `src/stores/theme.ts` (255 行)
+**文件**: `src/stores/theme.ts` (274 行)
 
 ### 10.1 状态变量
 
@@ -475,20 +475,23 @@ function goToAbout() {
 
 | 方法 | 行号 | 作用 |
 |------|------|------|
-| `init()` | L27-59 | 从 localStorage 加载所有设置，调用 `applyTheme()` + `applySettings()` |
-| `applyTheme()` | L61-68 | 切换 `<html>.dark` class |
-| `applySettings()` | L134-168 | 设置 CSS 变量 `--hue`, `--page-bg`, `--card-bg` 等 |
-| `toggleTheme()` | L170-175 | 切换暗/亮 + 持久化 + 重新应用 |
-| `setHue(n)` | L177-181 | 设置色相 + 持久化 + 重新应用 |
-| `setBgThemeId(n)` | L219-223 | 设置背景预设 + 持久化 + 重新应用 |
-| `resetSettings()` | L225-243 | 重置所有为默认值 + 清除 localStorage |
+| `init()` | L29-64 | 从 localStorage 加载所有设置（含 wallpaper），调用 `applyTheme()` + `applySettings()` |
+| `applyTheme()` | L66-73 | 切换 `<html>.dark` class |
+| `applySettings()` | L139-175 | 设置 CSS 变量 `--hue`, `--page-bg`, `--card-bg`, `--bg-image` 等 |
+| `toggleTheme()` | L75-80 | 切换暗/亮 + 持久化 + 重新应用 |
+| `setHue(n)` | L178-182 | 设置色相 + 持久化 + 重新应用 |
+| `setWallpaper(url)` | L208-216 | 设置壁纸 URL + 持久化 + 重新应用 |
+| `setBgThemeId(n)` | L224-228 | 设置背景预设 + 持久化 + 重新应用 |
+| `resetSettings()` | L235-261 | 重置所有为默认值 + 清除 localStorage（含 wallpaper） |
 
-### 10.3 `applySettings()` 详细逻辑 (`theme.ts` L134-168)
+### 10.3 `applySettings()` 详细逻辑 (`theme.ts` L139-175)
 
 1. 设置 `--hue`, `--page-width`, `--banner-height`, `--card-radius`
 2. 根据 `bgThemeId` 和 `isDark` 找到对应 preset，设置 `--page-bg`, `--card-bg`, `--card-bg-transparent`, `--float-panel-bg`
 3. 从当前 card 颜色计算 5 个 glass 透明度变量 (95%/70%/60%/50%/40%/30%)
-4. 如果有 wallpeper URL，设置 body 背景图片
+4. 如果有 wallpaper URL，设置 `--bg-image`, `--bg-attachment`, `--bg-size`, `--bg-position`；否则移除这些变量
+
+> **注意**: 暗色/亮色切换已分离到独立的 `toggleTheme()` 函数 (L75-80)，`applySettings()` 不再负责切换主题逻辑。
 
 ---
 
@@ -653,7 +656,7 @@ Overlay 模式淡入淡出，Inline 模式向上滑入。
 |------|---------|------|
 | App.vue | `src/App.vue` | 139 |
 | Navbar.vue | `src/components/Navbar.vue` | 235 |
-| SettingsPanel.vue | `src/components/SettingsPanel.vue` | 449 |
+| SettingsPanel.vue | `src/components/SettingsPanel.vue` | 434 |
 | BannerSection.vue | `src/components/BannerSection.vue` | 237 |
 | PageProgressBar.vue | `src/components/PageProgressBar.vue` | 101 |
 | FloatingButtons.vue | `src/components/FloatingButtons.vue` | 760 |
@@ -667,7 +670,7 @@ Overlay 模式淡入淡出，Inline 模式向上滑入。
 | Chatter.vue | `src/pages/Chatter.vue` | 66 |
 | Friends.vue | `src/pages/Friends.vue` | 81 |
 | About.vue | `src/pages/About.vue` | 65 |
-| theme.ts | `src/stores/theme.ts` | 255 |
+| theme.ts | `src/stores/theme.ts` | 274 |
 | siteConfig.ts | `src/siteConfig.ts` | 89 |
 | main.css | `src/assets/styles/main.css` | 441 |
 | router/index.ts | `src/router/index.ts` | 62 |
@@ -682,9 +685,10 @@ Overlay 模式淡入淡出，Inline 模式向上滑入。
 | 暗色/浅色 | `isDark` | 全局 | 切换 `.dark` class，改变所有文本/背景变量 |
 | 横幅开关 | `bannerEnabled` | `BannerSection.vue` | 横幅区域显隐 |
 | 横幅高度 | `bannerHeight` | `BannerSection.vue` L5 | 横幅容器 height |
-| 壁纸 | `wallpaperUrl` | `theme.ts` L160-164 | body 背景图片 |
+| 壁纸 | `wallpaperUrl` | `theme.ts` L164-175 | body 背景图片 |
 | 波浪 | localStorage | `BannerSection.vue` L55-92 | 底部波浪 SVG |
 | 音乐循环模式 | `repeatMode` | `FloatingButtons.vue` L365-374 | 播放完毕后的行为 |
+| 主题切换 `toggleTheme()` | `isDark` | 全局 | 切换 `.dark` class + 更新所有 CSS 变量 |
 
 ## 附录 C：关键 CSS 选择器
 

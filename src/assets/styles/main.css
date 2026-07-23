@@ -227,6 +227,11 @@ img, .animate-spin, .animate-pulse, [class*="animate-"] {
   to { opacity: 1; transform: translateY(0); }
 }
 
+.animate-fade-in-up {
+  opacity: 0;
+  animation: fadeInUp 0.3s ease-out forwards;
+}
+
 @keyframes fadeInOut {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -439,3 +444,72 @@ img, .animate-spin, .animate-pulse, [class*="animate-"] {
 }
 
 /* Float panel animation uses the component classes above */
+
+/* ============ Firefly-style Smooth Animations ============ */
+
+/* Card hover: smooth scale + shadow transition */
+.card-hover {
+  @apply transition-all duration-300 ease-out;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+}
+
+.dark .card-hover:hover {
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
+}
+
+/* Staggered fade-in for grid items */
+.stagger-fade-in > * {
+  opacity: 0;
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* Smooth sidebar card entrance */
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.4s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.4s ease-out forwards;
+}
+
+/* Firefly-style content reveal */
+.content-reveal {
+  opacity: 0;
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Smooth link underline (Firefly-inspired) */
+.hover-underline {
+  position: relative;
+  text-decoration: none;
+}
+
+.hover-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary);
+  transition: width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border-radius: 1px;
+}
+
+.hover-underline:hover::after {
+  width: 100%;
+}

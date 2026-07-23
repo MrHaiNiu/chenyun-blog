@@ -15,10 +15,8 @@
         <div
           v-for="(chatter, i) in chatters"
           :key="chatter.slug"
-          v-motion
-          :initial="{ opacity: 0, y: 20 }"
-          :visibleOnce="{ opacity: 1, y: 0, transition: { duration: 500, delay: i * 100 } }"
-          class="rounded-3xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg p-5 md:p-6 transition-all duration-500 hover:shadow-xl"
+          class="rounded-3xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg p-5 md:p-6 transition-all duration-500 hover:shadow-xl animate-fade-in-up"
+          :style="{ animationDelay: `${i * 30}ms` }"
         >
           <div class="flex items-start gap-3">
             <img

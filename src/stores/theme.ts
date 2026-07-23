@@ -17,12 +17,14 @@ export const useThemeStore = defineStore('theme', () => {
   const enableCardBorder = ref(true)
   // Layout: full / sidebar
   const layoutMode = ref<'sidebar' | 'full'>('sidebar')
-  // Wallpaper (custom bg image)
-  const wallpaperUrl = ref<string>('')
+  // Post list layout: list / grid
+  const postLayout = ref<'list' | 'grid'>('list')
   // Banner enabled
   const bannerEnabled = ref(true)
   // Background color theme preset id
   const bgThemeId = ref(0)
+  // Wallpaper (custom bg image)
+  const wallpaperUrl = ref<string>('')
 
   function init() {
     mounted.value = true
@@ -45,14 +47,17 @@ export const useThemeStore = defineStore('theme', () => {
     const savedLayout = localStorage.getItem('blog-layout')
     if (savedLayout === 'full' || savedLayout === 'sidebar') layoutMode.value = savedLayout
 
-    const savedWallpaper = localStorage.getItem('blog-wallpaper')
-    if (savedWallpaper) wallpaperUrl.value = savedWallpaper
-
     const savedBanner = localStorage.getItem('blog-banner-enabled')
     if (savedBanner !== null) bannerEnabled.value = savedBanner === 'true'
 
     const savedBgTheme = localStorage.getItem('blog-bg-theme-id')
     if (savedBgTheme !== null) bgThemeId.value = parseInt(savedBgTheme)
+
+    const savedPostLayout = localStorage.getItem('blog-post-layout')
+    if (savedPostLayout === 'list' || savedPostLayout === 'grid') postLayout.value = savedPostLayout
+
+    const savedWallpaper = localStorage.getItem('blog-wallpaper')
+    if (savedWallpaper) wallpaperUrl.value = savedWallpaper
 
     applyTheme()
     applySettings()
@@ -65,6 +70,13 @@ export const useThemeStore = defineStore('theme', () => {
     } else {
       root.classList.remove('dark')
     }
+  }
+
+  function toggleTheme() {
+    isDark.value = !isDark.value
+    localStorage.setItem('blog-theme', isDark.value ? 'dark' : 'light')
+    applyTheme()
+    applySettings()
   }
 
   // Background color presets — each has page bg + card/panel colors
@@ -156,22 +168,18 @@ export const useThemeStore = defineStore('theme', () => {
     root.style.setProperty('--glass-40', `rgba(${cardRgb},0.4)`)
     root.style.setProperty('--glass-30', `rgba(${cardRgb},0.3)`)
 
-    // Wallpaper
+    // Background image (wallpaper)
     if (wallpaperUrl.value) {
-      document.body.style.backgroundImage = `url(${wallpaperUrl.value})`
-      document.body.style.backgroundSize = 'cover'
-      document.body.style.backgroundAttachment = 'fixed'
-      document.body.style.backgroundPosition = 'center'
+      root.style.setProperty('--bg-image', `url(${wallpaperUrl.value})`)
+      root.style.setProperty('--bg-attachment', 'fixed')
+      root.style.setProperty('--bg-size', 'cover')
+      root.style.setProperty('--bg-position', 'center')
     } else {
-      document.body.style.backgroundImage = ''
+      root.style.removeProperty('--bg-image')
+      root.style.removeProperty('--bg-attachment')
+      root.style.removeProperty('--bg-size')
+      root.style.removeProperty('--bg-position')
     }
-  }
-
-  function toggleTheme() {
-    isDark.value = !isDark.value
-    localStorage.setItem('blog-theme', isDark.value ? 'dark' : 'light')
-    applyTheme()
-    applySettings()
   }
 
   function setHue(hue: number) {
@@ -206,7 +214,11 @@ export const useThemeStore = defineStore('theme', () => {
 
   function setWallpaper(url: string) {
     wallpaperUrl.value = url
-    localStorage.setItem('blog-wallpaper', url)
+    if (url) {
+      localStorage.setItem('blog-wallpaper', url)
+    } else {
+      localStorage.removeItem('blog-wallpaper')
+    }
     applySettings()
   }
 
@@ -222,23 +234,30 @@ export const useThemeStore = defineStore('theme', () => {
     applySettings()
   }
 
+  function setPostLayout(layout: 'list' | 'grid') {
+    postLayout.value = layout
+    localStorage.setItem('blog-post-layout', layout)
+  }
+
   function resetSettings() {
     themeHue.value = 240
     pageWidth.value = 75
     bannerHeight.value = 100
     cardRadius.value = 24
     layoutMode.value = 'sidebar'
-    wallpaperUrl.value = ''
     bannerEnabled.value = true
     bgThemeId.value = 0
+    wallpaperUrl.value = ''
+    postLayout.value = 'list'
     localStorage.removeItem('blog-hue')
     localStorage.removeItem('blog-page-width')
     localStorage.removeItem('blog-banner-height')
     localStorage.removeItem('blog-card-radius')
     localStorage.removeItem('blog-layout')
-    localStorage.removeItem('blog-wallpaper')
     localStorage.removeItem('blog-banner-enabled')
     localStorage.removeItem('blog-bg-theme-id')
+    localStorage.removeItem('blog-wallpaper')
+    localStorage.removeItem('blog-post-layout')
     applySettings()
   }
 
@@ -248,8 +267,8 @@ export const useThemeStore = defineStore('theme', () => {
 
   return {
     isDark, mounted,
-    themeHue, pageWidth, bannerHeight, cardRadius, layoutMode, wallpaperUrl, bannerEnabled, bgThemeId, bgPresets,
+    themeHue, pageWidth, bannerHeight, cardRadius, layoutMode, bannerEnabled, bgThemeId, bgPresets, postLayout, wallpaperUrl,
     init, toggleTheme, applySettings,
-    setHue, setPageWidth, setBannerHeight, setCardRadius, setLayoutMode, setWallpaper, setBannerEnabled, setBgThemeId, resetSettings,
+    setHue, setPageWidth, setBannerHeight, setCardRadius, setLayoutMode, setBannerEnabled, setBgThemeId, setPostLayout, setWallpaper, resetSettings,
   }
 })

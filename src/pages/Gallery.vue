@@ -17,11 +17,9 @@
         <div
           v-for="(album, i) in albums"
           :key="album.id"
-          v-motion
-          :initial="{ opacity: 0, y: 30 }"
-          :visibleOnce="{ opacity: 1, y: 0, transition: { duration: 500, delay: i * 100 } }"
           @click="openAlbum(album)"
-          class="group rounded-3xl bg-glass-40 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl cursor-pointer"
+          class="group rounded-3xl bg-glass-40 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl cursor-pointer animate-fade-in-up"
+          :style="{ animationDelay: `${i * 30}ms` }"
         >
           <div class="relative aspect-[16/10] overflow-hidden">
             <img

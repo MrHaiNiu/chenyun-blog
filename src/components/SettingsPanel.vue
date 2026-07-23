@@ -16,50 +16,6 @@
       </div>
 
       <div class="px-4 py-3 space-y-4">
-        <!-- ========== Wallpaper ========== -->
-        <section>
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 relative ml-3
-              before:w-1 before:h-4 before:rounded-md before:bg-(--primary)
-              before:absolute before:-left-3 before:top-1/2 before:-translate-y-1/2"
-            >
-              壁纸
-            </h3>
-            <button
-              @click="resetWallpaper"
-              class="w-6 h-6 flex items-center justify-center rounded text-slate-400 hover:text-(--primary) hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
-              title="重置"
-            >
-              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-            </button>
-          </div>
-          <div class="space-y-2">
-            <input
-              v-model="localWallpaper"
-              type="text"
-              placeholder="输入壁纸 URL（留空恢复默认）"
-              class="w-full px-3 py-2 text-xs rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-(--primary)/30"
-              @input="onWallpaperInput"
-            />
-            <div class="flex gap-2">
-              <button
-                @click="setWallpaper('')"
-                class="flex-1 px-2 py-1.5 text-xs font-bold rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
-              >
-                默认
-              </button>
-              <button
-                @click="setWallpaper('https://bu.dusays.com/2026/03/24/69c26fe4acdb5.jpg')"
-                class="flex-1 px-2 py-1.5 text-xs font-bold rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
-              >
-                应用
-              </button>
-            </div>
-          </div>
-        </section>
-
         <!-- ========== Background Color ========== -->
         <section>
           <div class="flex items-center justify-between mb-2">
@@ -89,6 +45,41 @@
               :style="{ backgroundColor: themeStore.isDark ? p.dark : p.light }"
               :title="p.name"
             />
+          </div>
+        </section>
+
+        <!-- ========== Wallpaper (Background Image) ========== -->
+        <section>
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 relative ml-3
+              before:w-1 before:h-4 before:rounded-md before:bg-(--primary)
+              before:absolute before:-left-3 before:top-1/2 before:-translate-y-1/2"
+            >
+              壁纸
+            </h3>
+            <button
+              @click="resetWallpaper"
+              class="w-6 h-6 flex items-center justify-center rounded text-slate-400 hover:text-(--primary) hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
+              title="重置"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
+          </div>
+          <div class="flex gap-2">
+            <input
+              v-model="localWallpaper"
+              placeholder="输入图片URL..."
+              class="flex-1 px-3 py-1.5 text-xs rounded-lg bg-slate-100 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-(--primary) transition-colors"
+              @input="onWallpaperInput"
+            />
+            <button
+              @click="setWallpaper(localWallpaper)"
+              class="px-3 py-1.5 text-xs font-bold rounded-lg bg-(--primary) text-white hover:opacity-90 transition-opacity shrink-0"
+            >
+              应用
+            </button>
           </div>
         </section>
 
@@ -235,18 +226,18 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const themeStore = useThemeStore()
 
 const localHue = ref(themeStore.themeHue)
-const localWallpaper = ref(themeStore.wallpaperUrl)
 const localBannerHeight = ref(themeStore.bannerHeight)
 const localBgThemeId = ref(themeStore.bgThemeId)
+const localWallpaper = ref(themeStore.wallpaperUrl)
 const wavesEnabled = ref(localStorage.getItem('blog-waves-enabled') !== 'false')
 
 // Sync when panel opens
 watch(() => props.isOpen, (open) => {
   if (open) {
     localHue.value = themeStore.themeHue
-    localWallpaper.value = themeStore.wallpaperUrl
     localBannerHeight.value = themeStore.bannerHeight
     localBgThemeId.value = themeStore.bgThemeId
+    localWallpaper.value = themeStore.wallpaperUrl
     wavesEnabled.value = localStorage.getItem('blog-waves-enabled') !== 'false'
     // Re-set range progress after DOM updates
     requestAnimationFrame(refreshRangeProgress)
@@ -276,8 +267,8 @@ function handleRangeInput(e: Event) {
 }
 
 function onHueChange() { themeStore.setHue(localHue.value) }
-function onWallpaperInput() { /* debounce - apply on blur or button */ }
-function setWallpaper(url: string) { localWallpaper.value = url; themeStore.setWallpaper(url) }
+function onWallpaperInput() { /* live preview - handled by watch */ }
+function setWallpaper(url: string) { themeStore.setWallpaper(url) }
 function toggleBanner() { themeStore.setBannerEnabled(!themeStore.bannerEnabled) }
 function onBannerHeightChange() { themeStore.setBannerHeight(localBannerHeight.value) }
 function selectBgTheme(id: number) {
@@ -311,9 +302,9 @@ function resetBgTheme() {
 function resetSettings() {
   themeStore.resetSettings()
   localHue.value = 240
-  localWallpaper.value = ''
   localBannerHeight.value = 100
   localBgThemeId.value = 0
+  localWallpaper.value = ''
   wavesEnabled.value = true
   localStorage.setItem('blog-waves-enabled', 'true')
   window.dispatchEvent(new CustomEvent('waves-toggle', { detail: true }))
