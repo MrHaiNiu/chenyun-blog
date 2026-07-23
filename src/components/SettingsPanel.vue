@@ -4,7 +4,7 @@
     class="float-panel fixed top-14 right-4 w-72 sm:w-80 z-[2000]"
     :class="{ 'float-panel-closed': !isOpen }"
   >
-    <div class="bg-(--float-panel-bg) rounded-(--radius-large) overflow-hidden max-h-[70vh] overflow-y-auto border border-black/5 dark:border-white/10">
+    <div class="bg-(--float-panel-bg) rounded-(--radius-large) overflow-hidden max-h-[85vh] overflow-y-auto border border-black/5 dark:border-white/10">
       <!-- Header -->
       <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200/50 dark:border-slate-700/50">
         <h2 class="text-base font-black text-slate-800 dark:text-white">设置</h2>
@@ -16,6 +16,46 @@
       </div>
 
       <div class="px-4 py-3 space-y-4">
+        <!-- ========== Theme Color (top) ========== -->
+        <section>
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 relative ml-3
+              before:w-1 before:h-4 before:rounded-md before:bg-(--primary)
+              before:absolute before:-left-3 before:top-1/2 before:-translate-y-1/2"
+            >
+              主题色
+            </h3>
+            <div class="flex items-center gap-1">
+              <button
+                @click="resetHue"
+                class="w-6 h-6 flex items-center justify-center rounded text-slate-400 hover:text-(--primary) hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
+                title="重置"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </button>
+              <div class="w-8 h-6 flex items-center justify-center text-xs font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 rounded">
+                {{ localHue }}
+              </div>
+            </div>
+          </div>
+          <div class="w-full h-6 px-1 rounded select-none"
+            :style="{ background: 'linear-gradient(to right, hsl(0,70%,55%), hsl(60,70%,55%), hsl(120,70%,55%), hsl(180,70%,55%), hsl(240,70%,55%), hsl(300,70%,55%), hsl(360,70%,55%))' }"
+          >
+            <input
+              aria-label="Theme Color"
+              type="range"
+              min="0"
+              max="360"
+              step="5"
+              v-model.number="localHue"
+              class="slider color-slider w-full"
+              @input="onHueChange"
+            />
+          </div>
+        </section>
+
         <!-- ========== Background Color ========== -->
         <section>
           <div class="flex items-center justify-between mb-2">
@@ -45,41 +85,6 @@
               :style="{ backgroundColor: themeStore.isDark ? p.dark : p.light }"
               :title="p.name"
             />
-          </div>
-        </section>
-
-        <!-- ========== Wallpaper (Background Image) ========== -->
-        <section>
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 relative ml-3
-              before:w-1 before:h-4 before:rounded-md before:bg-(--primary)
-              before:absolute before:-left-3 before:top-1/2 before:-translate-y-1/2"
-            >
-              壁纸
-            </h3>
-            <button
-              @click="resetWallpaper"
-              class="w-6 h-6 flex items-center justify-center rounded text-slate-400 hover:text-(--primary) hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
-              title="重置"
-            >
-              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-            </button>
-          </div>
-          <div class="flex gap-2">
-            <input
-              v-model="localWallpaper"
-              placeholder="输入图片URL..."
-              class="flex-1 px-3 py-1.5 text-xs rounded-lg bg-slate-100 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-(--primary) transition-colors"
-              @input="onWallpaperInput"
-            />
-            <button
-              @click="setWallpaper(localWallpaper)"
-              class="px-3 py-1.5 text-xs font-bold rounded-lg bg-(--primary) text-white hover:opacity-90 transition-opacity shrink-0"
-            >
-              应用
-            </button>
           </div>
         </section>
 
@@ -164,46 +169,6 @@
           </div>
         </section>
 
-        <!-- ========== Theme Color (with reset) ========== -->
-        <section>
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 relative ml-3
-              before:w-1 before:h-4 before:rounded-md before:bg-(--primary)
-              before:absolute before:-left-3 before:top-1/2 before:-translate-y-1/2"
-            >
-              主题色
-            </h3>
-            <div class="flex items-center gap-1">
-              <button
-                @click="resetHue"
-                class="w-6 h-6 flex items-center justify-center rounded text-slate-400 hover:text-(--primary) hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
-                title="重置"
-              >
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-              </button>
-              <div class="w-8 h-6 flex items-center justify-center text-xs font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 rounded">
-                {{ localHue }}
-              </div>
-            </div>
-          </div>
-          <div class="w-full h-6 px-1 rounded select-none"
-            :style="{ background: 'linear-gradient(to right, hsl(0,70%,55%), hsl(60,70%,55%), hsl(120,70%,55%), hsl(180,70%,55%), hsl(240,70%,55%), hsl(300,70%,55%), hsl(360,70%,55%))' }"
-          >
-            <input
-              aria-label="Theme Color"
-              type="range"
-              min="0"
-              max="360"
-              step="5"
-              v-model.number="localHue"
-              class="slider color-slider w-full"
-              @input="onHueChange"
-            />
-          </div>
-        </section>
-
         <!-- Reset -->
         <button
           @click="resetSettings"
@@ -228,7 +193,6 @@ const themeStore = useThemeStore()
 const localHue = ref(themeStore.themeHue)
 const localBannerHeight = ref(themeStore.bannerHeight)
 const localBgThemeId = ref(themeStore.bgThemeId)
-const localWallpaper = ref(themeStore.wallpaperUrl)
 const wavesEnabled = ref(localStorage.getItem('blog-waves-enabled') !== 'false')
 
 // Sync when panel opens
@@ -237,7 +201,6 @@ watch(() => props.isOpen, (open) => {
     localHue.value = themeStore.themeHue
     localBannerHeight.value = themeStore.bannerHeight
     localBgThemeId.value = themeStore.bgThemeId
-    localWallpaper.value = themeStore.wallpaperUrl
     wavesEnabled.value = localStorage.getItem('blog-waves-enabled') !== 'false'
     // Re-set range progress after DOM updates
     requestAnimationFrame(refreshRangeProgress)
@@ -267,8 +230,6 @@ function handleRangeInput(e: Event) {
 }
 
 function onHueChange() { themeStore.setHue(localHue.value) }
-function onWallpaperInput() { /* live preview - handled by watch */ }
-function setWallpaper(url: string) { themeStore.setWallpaper(url) }
 function toggleBanner() { themeStore.setBannerEnabled(!themeStore.bannerEnabled) }
 function onBannerHeightChange() { themeStore.setBannerHeight(localBannerHeight.value) }
 function selectBgTheme(id: number) {
@@ -279,10 +240,6 @@ function toggleWaves() {
   wavesEnabled.value = !wavesEnabled.value
   localStorage.setItem('blog-waves-enabled', `${wavesEnabled.value}`)
   window.dispatchEvent(new CustomEvent('waves-toggle', { detail: wavesEnabled.value }))
-}
-function resetWallpaper() {
-  localWallpaper.value = ''
-  themeStore.setWallpaper('')
 }
 function resetBanner() {
   localBannerHeight.value = 100
@@ -304,7 +261,6 @@ function resetSettings() {
   localHue.value = 240
   localBannerHeight.value = 100
   localBgThemeId.value = 0
-  localWallpaper.value = ''
   wavesEnabled.value = true
   localStorage.setItem('blog-waves-enabled', 'true')
   window.dispatchEvent(new CustomEvent('waves-toggle', { detail: true }))
