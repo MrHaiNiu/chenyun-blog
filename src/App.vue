@@ -71,9 +71,14 @@ const toastClass = computed(() => {
 onMounted(() => {
   themeStore.init()
 
-  // 默认黑色主题色（非暗主题，仅 --primary 为黑色）
+  // 每次加载都应用保存的主题色覆盖（默认黑色）
   const override = localStorage.getItem('theme.primaryOverride')
-  if (!override) {
+  if (override === 'black') {
+    document.documentElement.style.setProperty('--primary', '#000000')
+  } else if (override === 'white') {
+    document.documentElement.style.setProperty('--primary', '#ffffff')
+  } else {
+    // 首次访问，默认黑色
     document.documentElement.style.setProperty('--primary', '#000000')
     localStorage.setItem('theme.primaryOverride', 'black')
   }
