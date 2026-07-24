@@ -130,6 +130,20 @@
   }
 }
 
+/* ============ Card style toggles (controlled by SettingsPanel) ============ */
+/* When enable-card-border is absent on <html>, strip border+shadow from cards */
+html:not(.enable-card-border) [class*="rounded-3xl"] {
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+/* When card-follow-hue is present, tint card backgrounds with the current hue */
+html.card-follow-hue {
+  --card-hue-tint: hsla(var(--hue, 240), 70%, 55%, 0.06);
+}
+html.card-follow-hue [class*="bg-glass-"] {
+  background-color: var(--card-hue-tint) !important;
+}
+
 /* Global scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

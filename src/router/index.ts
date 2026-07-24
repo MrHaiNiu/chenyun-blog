@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
@@ -32,6 +32,11 @@ const router = createRouter({
       path: '/projects',
       name: 'projects',
       component: () => import('@/pages/Projects.vue'),
+    },
+    {
+      path: '/project/:slug',
+      name: 'project-detail',
+      component: () => import('@/pages/ProjectDetail.vue'),
     },
     {
       path: '/gallery',

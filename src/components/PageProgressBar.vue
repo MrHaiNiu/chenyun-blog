@@ -77,6 +77,13 @@ function handleRouteChangeEnd() {
   }
 }
 
+function handleProgressTrigger() {
+  handleRouteChangeStart()
+  setTimeout(() => {
+    handleRouteChangeEnd()
+  }, 600)
+}
+
 onMounted(() => {
   // Route listeners
   removeBeforeEach = router.beforeEach(() => {
@@ -88,6 +95,8 @@ onMounted(() => {
 
   // Scroll listener
   window.addEventListener('scroll', onScroll, { passive: true })
+  // Custom progress trigger event
+  window.addEventListener('page-progress-trigger', handleProgressTrigger)
   // Initial check
   updateScrollProgress()
 })
@@ -97,5 +106,6 @@ onUnmounted(() => {
   if (removeBeforeEach) removeBeforeEach()
   if (removeAfterEach) removeAfterEach()
   window.removeEventListener('scroll', onScroll)
+  window.removeEventListener('page-progress-trigger', handleProgressTrigger)
 })
 </script>

@@ -28,7 +28,7 @@ const quotes: DailyQuote[] = [
   { text: 'Talk is cheap. Show me the code.', author: 'Linus Torvalds' },
   { text: 'Stay hungry, stay foolish.', author: 'Steve Jobs' },
   { text: '把代码当作诗歌来写', author: 'unknown' },
-  { text: '在代码与学术间穿梭，每个bug都是成长的契机', author: 'Chenyun' },
+  { text: '在代码与学术间穿梭，每个bug都是成长的契机', author: '宸云' },
   { text: '最简单的往往是最有效的', author: 'unknown' },
   { text: '不要只是改正错误，要理解它为什么会发生', author: 'unknown' },
   { text: '写代码就像写日记，未来的你会感谢现在的你', author: 'unknown' },

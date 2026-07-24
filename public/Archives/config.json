@@ -1,7 +1,16 @@
 {
   "files": [
     {
-      "filename": "2222.md",
+      "filename": "CLAUDE 中文.md",
+      "enabled": true,
+      "cover": ""
+    },
+    {
+      "filename": "markdown-test.md",
+      "enabled": true,
+      "cover": ""
+    },{
+      "filename": "CLAUDE.md",
       "enabled": true,
       "cover": ""
     }

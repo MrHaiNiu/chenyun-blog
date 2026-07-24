@@ -1,8 +1,8 @@
 /**
  * watch-archives.mjs
  *
- * 监听 public/Archives/ 下的 .md 文件变化，
- * 自动同步更新 config.json。
+ * 监听 public/Archives/ 和 public/Chatter/ 下的 .md 文件变化，
+ * 自动同步更新各目录下的 config.json。
  *
  * 用法：
  *   node scripts/watch-archives.mjs          # 监听模式
@@ -14,14 +14,32 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const ARCHIVES_DIR = path.resolve(__dirname, '../public/Archives')
-const CONFIG_PATH = path.join(ARCHIVES_DIR, 'config.json')
+
+// ====== 配置：要监听的目录列表 ======
+const WATCH_DIRS = [
+  {
+    name: 'archives',
+    dir: path.resolve(__dirname, '../public/Archives'),
+  },
+  {
+    name: 'chatter',
+    dir: path.resolve(__dirname, '../public/Chatter'),
+  },
+  {
+    name: 'about',
+    dir: path.resolve(__dirname, '../public/About'),
+  },
+  {
+    name: 'projects',
+    dir: path.resolve(__dirname, '../public/Projects'),
+  },
+]
 
 /** 读取已存在的 config.json（如果存在） */
-function readExistingConfig() {
+function readExistingConfig(configPath) {
   try {
-    if (fs.existsSync(CONFIG_PATH)) {
-      const raw = fs.readFileSync(CONFIG_PATH, 'utf-8')
+    if (fs.existsSync(configPath)) {
+      const raw = fs.readFileSync(configPath, 'utf-8')
       return JSON.parse(raw)
     }
   } catch {
@@ -31,9 +49,9 @@ function readExistingConfig() {
 }
 
 /** 扫描目录下的所有 .md 文件 */
-function scanMdFiles() {
+function scanMdFiles(dir) {
   try {
-    const files = fs.readdirSync(ARCHIVES_DIR)
+    const files = fs.readdirSync(dir)
     return files
       .filter(f => f.endsWith('.md'))
       .sort((a, b) => a.localeCompare(b))
@@ -45,7 +63,6 @@ function scanMdFiles() {
 /** 合并已有配置和新扫描结果 */
 function mergeConfig(existing, mdFiles) {
   if (!existing || !existing.files) {
-    // 没有现有配置，全部标记为新增
     return {
       files: mdFiles.map(filename => ({
         filename,
@@ -60,10 +77,8 @@ function mergeConfig(existing, mdFiles) {
 
   for (const filename of mdFiles) {
     if (existingMap.has(filename)) {
-      // 保留现有配置
       newFiles.push(existingMap.get(filename))
     } else {
-      // 新增文件，默认启用
       newFiles.push({
         filename,
         enabled: true,
@@ -75,18 +90,25 @@ function mergeConfig(existing, mdFiles) {
   return { files: newFiles }
 }
 
-/** 写入 config.json */
-function writeConfig(config) {
-  fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2) + '\n', 'utf-8')
-  console.log(`[archives] config.json 已更新 — ${config.files.length} 篇文章`)
+/** 同步单个目录 */
+function syncOne(cfg) {
+  const configPath = path.join(cfg.dir, 'config.json')
+  const mdFiles = scanMdFiles(cfg.dir)
+  const existing = readExistingConfig(configPath)
+  const config = mergeConfig(existing, mdFiles)
+  fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n', 'utf-8')
+  console.log(`[${cfg.name}] config.json 已更新 — ${config.files.length} 条记录`)
 }
 
-/** 执行一次同步 */
-function sync() {
-  const mdFiles = scanMdFiles()
-  const existing = readExistingConfig()
-  const config = mergeConfig(existing, mdFiles)
-  writeConfig(config)
+/** 同步所有目录 */
+function syncAll() {
+  for (const cfg of WATCH_DIRS) {
+    try {
+      syncOne(cfg)
+    } catch (err) {
+      console.error(`[${cfg.name}] 同步失败:`, err.message)
+    }
+  }
 }
 
 // ====== 主入口 ======
@@ -94,24 +116,27 @@ function sync() {
 const isOnce = process.argv.includes('--once')
 
 if (isOnce) {
-  console.log('[archives] 单次同步...')
-  sync()
+  console.log('[watch] 单次同步...')
+  syncAll()
   process.exit(0)
 }
 
 // 监听模式
-console.log('[archives] 开始监听 public/Archives/ 下的 .md 文件变化...')
-sync() // 启动时先同步一次
+console.log('[watch] 开始监听 public/Archives/, public/Chatter/, public/About/, public/Projects/ 下的 .md 文件变化...')
+syncAll() // 启动时先同步一次
 
-let syncTimer = null
-fs.watch(ARCHIVES_DIR, (eventType, filename) => {
-  // 只关注 .md 文件，忽略 config.json 本身
-  if (!filename || !filename.endsWith('.md')) return
-
-  // 防抖：500ms 内多次变化只同步一次
-  if (syncTimer) clearTimeout(syncTimer)
-  syncTimer = setTimeout(() => {
-    console.log(`[archives] 检测到变化: ${filename} (${eventType})`)
-    sync()
-  }, 500)
-})
+for (const cfg of WATCH_DIRS) {
+  let syncTimer = null
+  fs.watch(cfg.dir, (eventType, filename) => {
+    if (!filename || !filename.endsWith('.md')) return
+    if (syncTimer) clearTimeout(syncTimer)
+    syncTimer = setTimeout(() => {
+      console.log(`[${cfg.name}] 检测到变化: ${filename} (${eventType})`)
+      try {
+        syncOne(cfg)
+      } catch (err) {
+        console.error(`[${cfg.name}] 同步失败:`, err.message)
+      }
+    }, 500)
+  })
+}

@@ -8,7 +8,8 @@
     "dev:archives": "node scripts/watch-archives.mjs & vite",
     "build": "vite build",
     "preview": "vite preview",
-    "sync:archives": "node scripts/watch-archives.mjs --once"
+    "sync:archives": "node scripts/watch-archives.mjs --once",
+    "deploy": "node scripts/watch-archives.mjs --once && vite build"
   },
   "dependencies": {
     "@vueuse/core": "^13.0.0",

@@ -17,7 +17,6 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { siteConfig } from '@/siteConfig'
 
 const encouragements = [
   '今天也是元气满满的一天呢！',
@@ -37,11 +36,11 @@ const encouragements = [
 const hour = new Date().getHours()
 
 const greetingText = computed(() => {
-  if (hour < 6) return '夜深了，' + siteConfig.authorName
-  if (hour < 12) return '上午好，' + siteConfig.authorName
-  if (hour < 14) return '中午好，' + siteConfig.authorName
-  if (hour < 18) return '下午好，' + siteConfig.authorName
-  return '晚上好，' + siteConfig.authorName
+  if (hour < 6) return '夜深了'
+  if (hour < 12) return '上午好'
+  if (hour < 14) return '中午好'
+  if (hour < 18) return '下午好'
+  return '晚上好'
 })
 
 const greetingIcon = computed(() => {

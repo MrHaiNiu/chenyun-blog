@@ -213,16 +213,20 @@
         @click="scrollToTop"
         @mouseenter="logoHovered = true"
         @mouseleave="logoHovered = false"
-        class="back-top-btn"
+        class="back-top-btn flex items-center justify-center"
         title="回到顶部"
       >
-        <img
+        <div
           v-show="!logoHovered"
-          src="/logo.png"
-          alt="logo"
-          class="w-full h-full object-cover animate-spin"
-          style="animation-duration: 6s;"
-        />
+          class="w-full h-full rounded-full overflow-hidden bg-white dark:bg-slate-800 flex items-center justify-center"
+        >
+          <img
+            src="/logo.png"
+            alt="logo"
+            class="w-full h-full object-cover animate-spin"
+            style="animation-duration: 6s;"
+          />
+        </div>
         <div
           v-show="logoHovered"
           class="w-full h-full flex items-center justify-center"
@@ -689,11 +693,9 @@ onMounted(() => {
 .back-top-btn {
   width: 2.75rem;
   height: 2.75rem;
-  border-radius: 1rem;
+  border-radius: 9999px;
   overflow: hidden;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
   border: 1px solid rgba(148, 163, 184, 0.45);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
@@ -705,7 +707,6 @@ onMounted(() => {
 }
 
 :global(.dark) .back-top-btn {
-  background: rgba(30, 41, 59, 0.8);
   border-color: rgba(255, 255, 255, 0.15);
 }
 

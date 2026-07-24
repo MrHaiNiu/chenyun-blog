@@ -7,22 +7,21 @@
 
     <!-- Avatar section with floating animation -->
     <div class="relative pt-8 pb-4 flex flex-col items-center">
-      <div class="relative mb-4">
-        <!-- Glowing ring -->
-        <div class="absolute inset-0 rounded-full bg-accent-softer blur-xl animate-pulse" />
-        <!-- Avatar with float + hover rotate -->
-        <img
-          :src="siteConfig.avatarUrl"
-          :alt="siteConfig.authorName"
-          @click.stop="goToAbout"
-          class="relative w-24 h-24 rounded-full object-cover border-4 border-white/60 dark:border-slate-700/60 shadow-lg profile-avatar-float group-hover:rotate-[360deg] transition-transform duration-700 cursor-pointer"
-        />
+      <div class="relative mb-4 flex items-center justify-center">
+        <div class="w-24 h-24 rounded-full overflow-hidden bg-white dark:bg-slate-800">
+          <img
+            :src="siteConfig.avatarUrl"
+            :alt="siteConfig.authorName"
+            @click.stop="goToAbout"
+            class="w-full h-full object-cover object-[54%_center] profile-avatar-float group-hover:rotate-[360deg] transition-transform duration-700 cursor-pointer"
+          />
+        </div>
       </div>
 
       <h2 class="text-lg font-black text-slate-900 dark:text-white">{{ siteConfig.authorName }}</h2>
       <div class="w-8 h-0.5 bg-accent mx-auto rounded-full my-2" />
       <p class="text-xs text-slate-500 dark:text-slate-400 font-serif leading-relaxed px-4 text-center">
-        {{ siteConfig.bio }}
+        {{ bioText }}
       </p>
     </div>
 
@@ -68,10 +67,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { siteConfig } from '@/siteConfig'
 import { useToastStore } from '@/stores/toast'
+import { fetchAboutBio } from '@/utils/markdown'
 
 const props = defineProps<{
   postCount: number
@@ -81,6 +81,12 @@ const props = defineProps<{
 
 const router = useRouter()
 const toastStore = useToastStore()
+const bioText = ref(siteConfig.bio)
+
+onMounted(async () => {
+  const fmBio = await fetchAboutBio()
+  if (fmBio) bioText.value = fmBio
+})
 
 function goToAbout() {
   router.push('/about')

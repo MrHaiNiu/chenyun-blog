@@ -33,6 +33,7 @@
 | 配置 | `src/siteConfig.ts` | 站点配置（作者名、导航链接、社交链接、背景图等） |
 | 状态 | `src/stores/theme.ts` | Pinia store，管理所有主题/设置状态 |
 | 全局样式 | `src/assets/styles/main.css` | Tailwind v4 入口 + CSS 变量 + 自定义工具类 + 动画 |
+| 数据源 | `public/` 各子目录 | 所有模块数据通过 `public/` 下配置文件 + .md/JSON 文件管理，见 [附录 E](#附录-e-数据源管理) |
 
 ---
 
@@ -662,19 +663,22 @@ Overlay 模式淡入淡出，Inline 模式向上滑入。
 | FloatingButtons.vue | `src/components/FloatingButtons.vue` | 760 |
 | SearchBar.vue | `src/components/SearchBar.vue` | 233 |
 | ProfileCard.vue | `src/components/ProfileCard.vue` | 115 |
-| Home.vue | `src/pages/Home.vue` | 110 |
+| Home.vue | `src/pages/Home.vue` | 134 |
 | Timeline.vue | `src/pages/Timeline.vue` | 192 |
 | Projects.vue | `src/pages/Projects.vue` | 192 |
-| Gallery.vue | `src/pages/Gallery.vue` | 119 |
+| Gallery.vue | `src/pages/Gallery.vue` | 164 |
 | Music.vue | `src/pages/Music.vue` | 36 |
 | Chatter.vue | `src/pages/Chatter.vue` | 66 |
-| Friends.vue | `src/pages/Friends.vue` | 81 |
-| About.vue | `src/pages/About.vue` | 65 |
+| Friends.vue | `src/pages/Friends.vue` | 104 |
+| About.vue | `src/pages/About.vue` | 68 |
 | theme.ts | `src/stores/theme.ts` | 274 |
 | siteConfig.ts | `src/siteConfig.ts` | 89 |
 | main.css | `src/assets/styles/main.css` | 441 |
 | router/index.ts | `src/router/index.ts` | 62 |
 | types/index.ts | `src/types/index.ts` | 48 |
+| watch-archives.mjs | `scripts/watch-archives.mjs` | 138 |
+| watch-archives-server.cjs | `scripts/watch-archives-server.cjs` | 59 |
+| sync-archives.cjs | `scripts/sync-archives.cjs` | 91 |
 
 ## 附录 B：设置与影响范围
 
@@ -717,3 +721,105 @@ toastStore.showToast('✨ 消息内容', 'success') // success | warning | error
 ```
 
 Toast 在 `App.vue` L34-42 渲染，`fixed top-20 left-1/2 z-[3000]`，按类型应用不同背景色 (`App.vue` L62-68)。
+
+## 附录 E：数据源管理
+
+项目数据从 `public/` 下的 JSON + .md 配置文件中读取，每个模块独立管理：
+
+### Archives（归档文章）
+
+- **配置文件**: `public/Archives/config.json`
+- **数据文件**: `public/Archives/*.md`
+- **监听脚本**: `scripts/watch-archives.mjs` + `scripts/watch-archives-server.cjs`（服务器端）
+- **手动同步**: `node scripts/sync-archives.cjs /web/blog/Archives`
+
+### Chatter（说说）
+
+- **配置文件**: `public/Chatter/config.json`
+- **数据文件**: `public/Chatter/*.md`
+- 格式同上，由同一个 watch 脚本同时监听 Archives/ 和 Chatter/。
+
+### About（关于页面）
+
+- **配置文件**: `public/About/config.json`
+- **数据文件**: `public/About/*.md`
+- **监听**: 由 `watch-archives.mjs` / `watch-archives-server.cjs` 统一监听
+- **读取方式**: `About.vue` (L43-67) 先 fetch `config.json`，取 `files[0].filename` 再 fetch 对应的 .md 文件内容，用 `renderMarkdown()` 渲染
+
+config.json 格式（与 Archives 统一）：
+```json
+{
+  "files": [
+    { "filename": "about me.md", "enabled": true, "cover": "" }
+  ]
+}
+```
+
+### Friends（友链）
+
+- **配置文件**: `public/Friends/friends.json`
+- **数据格式**: 直接存放友链数组
+- **读取方式**: `Friends.vue` (L71-83) 在 `onMounted` 时 fetch JSON，渲染为友链卡片网格
+- **手动管理**: 直接编辑 `friends.json` 增删条目
+
+friends.json 格式：
+```json
+[
+  {
+    "id": "friend-id",
+    "name": "站点名",
+    "description": "站点描述",
+    "avatar": "头像URL",
+    "url": "站点链接",
+    "themeColor": "rgba(..., ..., ..., 0.5)"
+  }
+]
+```
+
+### Gallery（照片墙）
+
+- **配置文件**: `public/Gallery/albums.json`
+- **数据格式**: 相册数组，每个相册包含标题、描述、封面、照片列表
+- **读取方式**: `Gallery.vue` (L139-151) 在 `onMounted` 时 fetch JSON，渲染为相册网格 + 点击查看大图
+- **手动管理**: 直接编辑 `albums.json` 增删相册和照片
+
+albums.json 格式：
+```json
+[
+  {
+    "id": "album-id",
+    "title": "相册标题",
+    "description": "相册描述",
+    "cover": "封面图片URL",
+    "date": "2026.01",
+    "photos": [
+      { "url": "图片URL", "caption": "图片说明" }
+    ]
+  }
+]
+```
+
+### 配置文件统一格式（Archives / Chatter / About）
+
+```json
+{
+  "files": [
+    { "filename": "example.md", "enabled": true, "cover": "" }
+  ]
+}
+```
+
+### Watch 脚本
+
+`watch-archives.mjs` (L19-32) 定义了 `WATCH_DIRS` 数组，包含 archives、chatter、about 三个目录。服务器端 `watch-archives-server.cjs` (L14-18) 同理。
+
+### 已删除的旧数据文件
+
+以下旧文件已删除，数据已迁移至 `public/`：
+- `src/data/friends.ts` → `public/Friends/friends.json`
+- `src/data/albums.ts` → `public/Gallery/albums.json`
+- `src/data/chatters.ts` → `public/Chatter/config.json`
+
+**仍保留的 `src/data/` 文件**：
+- `src/data/projects.ts` — 项目数据（尚未迁移）
+- `src/data/quotes.ts` — 每日一言数据（尚未迁移）

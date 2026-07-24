@@ -70,6 +70,13 @@ const toastClass = computed(() => {
 
 onMounted(() => {
   themeStore.init()
+
+  // 默认黑色主题色（非暗主题，仅 --primary 为黑色）
+  const override = localStorage.getItem('theme.primaryOverride')
+  if (!override) {
+    document.documentElement.style.setProperty('--primary', '#000000')
+    localStorage.setItem('theme.primaryOverride', 'black')
+  }
 })
 </script>
 

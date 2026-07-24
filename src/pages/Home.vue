@@ -23,7 +23,7 @@
               :photo-count="photoCount"
               :friend-count="friendsData.length"
             />
-            <GreetingCard />
+            <DailyQuote />
             <CalendarWidget />
           </div>
         </aside>
@@ -47,7 +47,7 @@
         <!-- Right Sidebar -->
         <aside v-if="themeStore.layoutMode === 'sidebar'" class="hidden xl:block">
           <div class="sticky top-24 flex flex-col gap-4">
-            <DailyQuote />
+            <GreetingCard />
             <CategoriesCard />
             <SiteInfoCard />
             <MusicPlayer />
@@ -64,9 +64,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { fetchArchivesPosts } from '@/utils/markdown'
-import type { PostMeta } from '@/types'
-import { albums } from '@/data/albums'
-import { friendsData } from '@/data/friends'
+import type { PostMeta, Album, Friend } from '@/types'
 import { useThemeStore } from '@/stores/theme'
 import ProfileCard from '@/components/ProfileCard.vue'
 import BannerSection from '@/components/BannerSection.vue'
@@ -83,7 +81,9 @@ import SiteInfoCard from '@/components/SiteInfoCard.vue'
 
 const themeStore = useThemeStore()
 const posts = ref<PostMeta[]>([])
-const photoCount = computed(() => albums.reduce((sum, a) => sum + a.photos.length, 0))
+const albums = ref<Album[]>([])
+const friendsData = ref<Friend[]>([])
+const photoCount = computed(() => albums.value.reduce((sum, a) => sum + a.photos.length, 0))
 
 const POSTS_PER_PAGE = 4
 const currentPage = ref(1)
@@ -115,6 +115,17 @@ onMounted(async () => {
       posts.value = fresh
     }
   }, 3000)
+
+  // 异步加载 Albums 和 Friends 数据
+  const baseUrl = import.meta.env.BASE_URL || '/'
+  try {
+    const albumResp = await fetch(`${baseUrl}Gallery/albums.json?t=${Date.now()}`)
+    if (albumResp.ok) albums.value = await albumResp.json()
+  } catch (_e) { /* ignore */ }
+  try {
+    const friendResp = await fetch(`${baseUrl}Friends/friends.json?t=${Date.now()}`)
+    if (friendResp.ok) friendsData.value = await friendResp.json()
+  } catch (_e) { /* ignore */ }
 })
 
 onUnmounted(() => {

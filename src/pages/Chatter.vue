@@ -1,5 +1,7 @@
 <template>
-  <main class="w-full max-w-4xl mx-auto px-3 sm:px-6 pt-20 md:pt-24 pb-32 relative z-10 flex-1">
+  <div class="flex-1 flex flex-col">
+    <BannerSection />
+    <main class="w-full max-w-4xl mx-auto px-3 sm:px-6 pt-4 pb-32 relative z-10 flex-1">
     <BackButton />
 
     <div class="mt-8">
@@ -19,10 +21,16 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
             </svg>
           </button>
-          <SearchBar inline :search-fn="searchChatters" placeholder="搜索说说..." /></div>
+          <SearchBar inline :search-fn="searchChatters" placeholder="搜索说说..." />
+        </div>
       </div>
 
-      <div class="space-y-4">
+      <div v-if="loading" class="text-center py-20 text-slate-400">
+        <div class="inline-block w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mb-2"></div>
+        <p class="text-sm">加载中...</p>
+      </div>
+
+      <div v-else class="space-y-4">
         <div
           v-for="(chatter, i) in sortedChatters"
           :key="chatter.slug"
@@ -48,20 +56,31 @@
       </div>
     </div>
   </main>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { chatters } from '@/data/chatters'
+import { ref, computed, onMounted } from 'vue'
 import { siteConfig } from '@/siteConfig'
+import BannerSection from '@/components/BannerSection.vue'
 import BackButton from '@/components/BackButton.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import type { SearchResultItem } from '@/components/SearchBar.vue'
 
+interface ChatterItem {
+  slug: string
+  title: string
+  date: string
+  description: string
+  content: string
+}
+
+const chatters = ref<ChatterItem[]>([])
+const loading = ref(true)
 const sortAscending = ref(false)
 
 const sortedChatters = computed(() => {
-  let sorted = [...chatters]
+  let sorted = [...chatters.value]
   if (sortAscending.value) {
     sorted.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
   } else {
@@ -72,7 +91,7 @@ const sortedChatters = computed(() => {
 
 function searchChatters(query: string): SearchResultItem[] {
   const q = query.toLowerCase()
-  return chatters
+  return chatters.value
     .filter(c =>
       c.title.toLowerCase().includes(q) ||
       c.description.toLowerCase().includes(q) ||
@@ -85,4 +104,61 @@ function searchChatters(query: string): SearchResultItem[] {
       bindings: {},
     }))
 }
+
+/** 简单 frontmatter 解析 */
+function parseFrontmatter(raw: string): { data: Record<string, string>; content: string } {
+  const fmMatch = raw.match(/^---\n([\s\S]*?)\n---\n?/)
+  if (!fmMatch) return { data: {}, content: raw }
+  const fmStr = fmMatch[1]
+  const content = raw.slice(fmMatch[0].length)
+  const data: Record<string, string> = {}
+  for (const line of fmStr.split('\n')) {
+    const kvMatch = line.match(/^(\w+):\s*(.*)/)
+    if (kvMatch) {
+      data[kvMatch[1]] = kvMatch[2].trim().replace(/^["']|["']$/g, '')
+    }
+  }
+  return { data, content }
+}
+
+onMounted(async () => {
+  try {
+    const cacheBust = `?t=${Date.now()}`
+    const baseUrl = import.meta.env.BASE_URL || '/'
+    const resp = await fetch(`${baseUrl}Chatter/config.json${cacheBust}`)
+    if (!resp.ok) { loading.value = false; return }
+    const config = await resp.json()
+
+    const results = await Promise.all(
+      (config.files || [])
+        .filter((f: any) => f.enabled)
+        .map(async (entry: any) => {
+          try {
+            const rawResp = await fetch(`${baseUrl}Chatter/${encodeURIComponent(entry.filename)}${cacheBust}`)
+            if (!rawResp.ok) return null
+            const raw = await rawResp.text()
+            const { data, content } = parseFrontmatter(raw)
+            const slug = entry.filename.replace(/\.md$/, '')
+            return {
+              slug,
+              title: data.title || '无标题',
+              date: data.date || '1970-01-01',
+              description: data.description || '',
+              content: content.trim(),
+            } as ChatterItem
+          } catch {
+            return null
+          }
+        })
+    )
+
+    chatters.value = results
+      .filter((c): c is ChatterItem => c !== null)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  } catch (e) {
+    console.error('[Chatter] 加载失败:', e)
+  } finally {
+    loading.value = false
+  }
+})
 </script>

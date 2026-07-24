@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed inset-0 w-full h-full pointer-events-none z-10 overflow-hidden">
+  <div v-if="enabled" class="fixed inset-0 w-full h-full pointer-events-none z-10 overflow-hidden">
     <div
       v-for="p in petals"
       :key="p.id"
@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 interface Petal {
   id: number
@@ -28,6 +28,11 @@ interface Petal {
 }
 
 const petals = ref<Petal[]>([])
+const enabled = ref(true)
+
+function onSakuraToggle(e: Event) {
+  enabled.value = (e as CustomEvent).detail
+}
 
 onMounted(() => {
   petals.value = Array.from({ length: 40 }).map((_, i) => ({
@@ -37,5 +42,15 @@ onMounted(() => {
     duration: 6 + Math.random() * 8,
     delay: Math.random() * -15,
   }))
+
+  // Read initial state from localStorage
+  const stored = localStorage.getItem('theme.effectSakura')
+  enabled.value = stored !== null ? stored === 'true' : true
+
+  window.addEventListener('sakura-toggle', onSakuraToggle as EventListener)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('sakura-toggle', onSakuraToggle as EventListener)
 })
 </script>

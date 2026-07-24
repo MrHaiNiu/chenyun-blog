@@ -1,5 +1,7 @@
 <template>
-  <main class="w-full max-w-4xl mx-auto px-3 sm:px-6 pt-20 md:pt-24 pb-32 relative z-10 flex-1">
+  <div class="flex-1 flex flex-col">
+    <BannerSection />
+    <main class="w-full max-w-4xl mx-auto px-3 sm:px-6 pt-4 pb-32 relative z-10 flex-1">
     <BackButton />
 
     <div class="mt-8">
@@ -22,9 +24,11 @@
       </div>
     </div>
   </main>
+  </div>
 </template>
 
 <script setup lang="ts">
+import BannerSection from '@/components/BannerSection.vue'
 import BackButton from '@/components/BackButton.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import type { SearchResultItem } from '@/components/SearchBar.vue'

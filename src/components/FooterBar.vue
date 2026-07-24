@@ -3,13 +3,15 @@
     <div class="max-w-4xl mx-auto px-4 flex flex-col items-center justify-center gap-2">
       <!-- Copyright with rotating logo -->
       <div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-        <span>© 2026 Chenyun Sr.</span>
-        <img
-          src="/logo.png"
-          alt="logo"
-          class="w-6 h-6 rounded-full object-cover animate-spin"
-          style="animation-duration: 4s;"
-        />
+        <span>© 2026 宸云 Sr.</span>
+        <span class="w-5 h-5 rounded-full overflow-hidden bg-white dark:bg-slate-800 inline-flex items-center justify-center flex-shrink-0">
+          <img
+            src="/logo.png"
+            alt="logo"
+            class="w-full h-full object-cover animate-spin"
+            style="animation-duration: 4s;"
+          />
+        </span>
         <span>保留所有权利</span>
       </div>
 

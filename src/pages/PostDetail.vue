@@ -1,6 +1,6 @@
 <template>
   <div class="flex-1 flex flex-col">
-    <main class="w-full max-w-7xl mx-auto px-3 sm:px-6 pt-20 md:pt-24 pb-32 relative z-10 flex-1">
+    <main class="w-full max-w-7xl mx-auto px-3 sm:px-6 pt-16 pb-32 relative z-10 flex-1">
       <div v-if="post" class="grid grid-cols-1 lg:grid-cols-[14rem_minmax(0,1fr)] gap-6 mt-6">
         <!-- Left Sidebar: BackButton + TOC + ProfileCard -->
         <aside class="hidden lg:block">

@@ -6,10 +6,10 @@ import remarkRehype from 'remark-rehype'
 import rehypeHighlight from 'rehype-highlight'
 import rehypeKatex from 'rehype-katex'
 import rehypeStringify from 'rehype-stringify'
-import type { PostMeta, TocItem } from '@/types'
+import type { PostMeta, TocItem, Project as ProjectMeta } from '@/types'
 
 // Simple frontmatter parser (browser-compatible, no Buffer dependency)
-function parseFrontmatter(raw: string): { data: Record<string, any>; content: string } {
+export function parseFrontmatter(raw: string): { data: Record<string, any>; content: string } {
   const fmMatch = raw.match(/^---\n([\s\S]*?)\n---\n?/)
   if (!fmMatch) return { data: {}, content: raw }
 
@@ -36,11 +36,17 @@ function parseFrontmatter(raw: string): { data: Record<string, any>; content: st
     if (kvMatch) {
       currentKey = kvMatch[1]
       let value = kvMatch[2].trim()
+      const hadQuotes = /^["'].*["']$/.test(value)
       // Remove quotes
       value = value.replace(/^["']|["']$/g, '')
       if (value === '') {
-        // Could be an array following
-        data[currentKey] = []
+        if (hadQuotes) {
+          // Explicit quoted empty string like description: ""
+          data[currentKey] = ''
+        } else {
+          // Could be an array following (like tags: followed by - items)
+          data[currentKey] = []
+        }
       } else if (value.startsWith('[') && value.endsWith(']')) {
         // Inline array: ["tag1", "tag2"]
         data[currentKey] = value
@@ -82,10 +88,11 @@ export function getRecentPosts(_count: number = 5): PostMeta[] {
 export async function fetchArchivesPosts(): Promise<PostMeta[]> {
   /** 添加时间戳避免浏览器缓存 */
   const cacheBust = () => `?t=${Date.now()}`
+  const baseUrl = import.meta.env.BASE_URL || '/'
 
   let config: { files: Array<{ filename: string; enabled: boolean; cover: string }> }
   try {
-    const resp = await fetch(`/Archives/config.json${cacheBust()}`)
+    const resp = await fetch(`${baseUrl}Archives/config.json${cacheBust()}`)
     if (!resp.ok) return []
     config = await resp.json()
   } catch {
@@ -97,7 +104,8 @@ export async function fetchArchivesPosts(): Promise<PostMeta[]> {
   const posts = await Promise.all(
     enabledFiles.map(async (entry) => {
       try {
-        const rawResp = await fetch(`/Archives/${encodeURIComponent(entry.filename)}${cacheBust()}`)
+        const rawResp = await fetch(`${baseUrl}Archives/${encodeURIComponent(entry.filename)}${cacheBust()}`)
+        if (!rawResp.ok) return null
         const raw = await rawResp.text()
         const { data, content } = parseFrontmatter(raw)
         const slug = entry.filename.replace(/\.md$/, '')
@@ -131,6 +139,95 @@ export async function fetchArchivesPosts(): Promise<PostMeta[]> {
 export async function fetchArchivePostBySlug(slug: string): Promise<PostMeta | null> {
   const posts = await fetchArchivesPosts()
   return posts.find((p) => p.slug === slug) || null
+}
+
+/**
+ * Fetch bio from About markdown frontmatter.
+ * Falls back to siteConfig.bio if unavailable.
+ */
+export async function fetchAboutBio(): Promise<string> {
+  const baseUrl = import.meta.env.BASE_URL || '/'
+
+  try {
+    const cfgResp = await fetch(`${baseUrl}About/config.json?t=${Date.now()}`)
+    if (!cfgResp.ok) return ''
+    const cfg = await cfgResp.json()
+    const entry = cfg.files && cfg.files.find((f: any) => f.enabled)
+    if (!entry || !entry.filename) return ''
+
+    const mdResp = await fetch(`${baseUrl}About/${encodeURIComponent(entry.filename)}?t=${Date.now()}`)
+    if (!mdResp.ok) return ''
+    const raw = await mdResp.text()
+
+    const { data } = parseFrontmatter(raw)
+    return data.bio || ''
+  } catch {
+    return ''
+  }
+}
+
+/**
+ * Fetch all projects from public/Projects/ via runtime fetch().
+ * Same pattern as fetchArchivesPosts — reads config.json then .md files.
+ */
+export interface ProjectConfigFile {
+  filename: string
+  enabled: boolean
+  githubUrl?: string
+  icon?: string
+  tags?: string[]
+  description?: string
+  name?: string
+}
+
+export async function fetchProjects(): Promise<ProjectMeta[]> {
+  const cacheBust = () => `?t=${Date.now()}`
+  const baseUrl = import.meta.env.BASE_URL || '/'
+
+  let config: { files: ProjectConfigFile[] }
+  try {
+    const resp = await fetch(`${baseUrl}Projects/config.json${cacheBust()}`)
+    if (!resp.ok) return []
+    config = await resp.json()
+  } catch {
+    return []
+  }
+
+  const enabledFiles = config.files.filter((f) => f.enabled)
+
+  const projects = await Promise.all(
+    enabledFiles.map(async (entry) => {
+      try {
+        const rawResp = await fetch(`${baseUrl}Projects/${encodeURIComponent(entry.filename)}${cacheBust()}`)
+        if (!rawResp.ok) return null
+        const raw = await rawResp.text()
+        const { data, content } = parseFrontmatter(raw)
+        const slug = entry.filename.replace(/\.md$/, '')
+        return {
+          id: `proj_${slug}`,
+          slug,
+          name: data.title || entry.name || slug,
+          description: data.description || entry.description || '',
+          icon: data.icon || entry.icon || '🚀',
+          githubUrl: data.githubUrl || entry.githubUrl || '',
+          tags: Array.isArray(data.tags) ? data.tags : (entry.tags || []),
+          content: content || '',
+        } as ProjectMeta
+      } catch {
+        return null
+      }
+    }),
+  )
+
+  return projects.filter((p): p is ProjectMeta => p !== null)
+}
+
+/**
+ * Fetch a single project by slug.
+ */
+export async function fetchProjectBySlug(slug: string): Promise<ProjectMeta | null> {
+  const projects = await fetchProjects()
+  return projects.find((p) => p.slug === slug) || null
 }
 
 export async function renderMarkdown(content: string): Promise<{ html: string; toc: TocItem[] }> {

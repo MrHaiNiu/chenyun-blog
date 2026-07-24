@@ -36,15 +36,18 @@ export interface SiteConfig {
   danmakuList: string[]
 }
 
+const baseUrl = (typeof import.meta !== 'undefined' ? import.meta.env.BASE_URL : '/')
+const logoUrl = baseUrl + 'logo.png'
+
 export const siteConfig: SiteConfig = {
-  title: 'Chenyun の 宝藏之地',
-  faviconUrl: 'http://47.95.204.9/logo.png',
-  authorName: 'Chenyun',
+  title: '宸云 の 宝藏之地',
+  faviconUrl: logoUrl,
+  authorName: '宸云',
   bio: '在代码、学术与分子动力学模拟间穿梭的普通人。近期正埋头于 GROMACS 模拟研究与神经网络计算。',
-  navTitle: 'Chenyun',
+  navTitle: '宸云',
   navSuffix: 'の',
   navAfter: '宝藏之地',
-  avatarUrl: 'http://47.95.204.9/logo.png',
+  avatarUrl: logoUrl,
   useGradient: false,
   themeColors: ['#a18cd1', '#fbc2eb', '#a1c4fd', '#c2e9fb'],
   bgImages: [
@@ -73,7 +76,7 @@ export const siteConfig: SiteConfig = {
     link: 'https://icp.gov.moe/?keyword=20260240',
   },
   friendLinkApplyFormat:
-    '名称：Chenyunの宝藏之地\n简介：今天我也要学习吗\n链接：https://www.xinghuisama.top\n头像：http://47.95.204.9/logo.png',
+    '名称：宸云の宝藏之地\n简介：今天我也要学习吗\n链接：https://www.xinghuisama.top\n头像：http://47.95.204.9/logo.png',
   enableLevelSystem: true,
   buildDate: '2026-03-23T00:00:00',
   danmakuList: [

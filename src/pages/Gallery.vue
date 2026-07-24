@@ -1,12 +1,14 @@
 <template>
-  <main class="w-full max-w-6xl mx-auto px-3 sm:px-6 pt-20 md:pt-24 pb-32 relative z-10 flex-1">
+  <div class="flex-1 flex flex-col">
+    <BannerSection />
+    <main class="w-full max-w-6xl mx-auto px-3 sm:px-6 pt-4 pb-32 relative z-10 flex-1">
     <BackButton />
 
     <div class="mt-8">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
           <h1 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">相册</h1>
-          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">共 {{ albums.length }} 个相册</p>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1" v-if="!loading">共 {{ albums.length }} 个相册</p>
         </div>
         <div class="flex items-center gap-2 mt-3 sm:mt-0 sm:ml-4 shrink-0">
           <button
@@ -19,12 +21,17 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
             </svg>
           </button>
-          <SearchBar inline :search-fn="searchAlbums" placeholder="搜索相册..." /></div>
+          <SearchBar inline :search-fn="searchAlbums" placeholder="搜索相册..." />
+        </div>
       </div>
 
+      <!-- Loading -->
+      <div v-if="loading" class="text-center py-20 text-slate-400">
+        <div class="inline-block w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mb-2"></div>
+        <p class="text-sm">加载中...</p>
+      </div>
 
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+      <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
         <div
           v-for="(album, i) in sortedAlbums"
           :key="album.id"
@@ -83,21 +90,24 @@
       </Transition>
     </Teleport>
   </main>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { albums } from '@/data/albums'
+import { ref, computed, onMounted } from 'vue'
 import type { Album } from '@/types'
+import BannerSection from '@/components/BannerSection.vue'
 import BackButton from '@/components/BackButton.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import type { SearchResultItem } from '@/components/SearchBar.vue'
 
+const albums = ref<Album[]>([])
+const loading = ref(true)
 const selectedAlbum = ref<Album | null>(null)
 const sortAscending = ref(false)
 
 const sortedAlbums = computed(() => {
-  let sorted = [...albums]
+  let sorted = [...albums.value]
   if (sortAscending.value) {
     sorted.sort((a, b) => parseAlbumDate(a.date) - parseAlbumDate(b.date))
   } else {
@@ -117,7 +127,7 @@ function openAlbum(album: Album) {
 
 function searchAlbums(query: string): SearchResultItem[] {
   const q = query.toLowerCase()
-  return albums
+  return albums.value
     .filter(a =>
       a.title.toLowerCase().includes(q) ||
       a.description.toLowerCase().includes(q)
@@ -125,10 +135,24 @@ function searchAlbums(query: string): SearchResultItem[] {
     .map(a => ({
       title: a.title,
       description: a.description,
-      tag: 'div',
+      tag: 'div' as const,
       bindings: {},
     }))
 }
+
+onMounted(async () => {
+  try {
+    const baseUrl = import.meta.env.BASE_URL || '/'
+    const resp = await fetch(`${baseUrl}Gallery/albums.json?t=${Date.now()}`)
+    if (resp.ok) {
+      albums.value = await resp.json()
+    }
+  } catch (e) {
+    console.error('[Gallery] 加载失败:', e)
+  } finally {
+    loading.value = false
+  }
+})
 </script>
 
 <style scoped>

@@ -7,11 +7,13 @@
     <nav class="hidden md:flex items-center justify-between px-6 py-2.5 max-w-(--page-width) mx-auto">
       <!-- Left: Logo -->
       <RouterLink to="/" class="flex items-center gap-2 group flex-shrink-0">
-        <img
-          :src="siteConfig.avatarUrl"
-          :alt="siteConfig.authorName"
-          class="w-9 h-9 rounded-full object-cover shadow-md group-hover:rotate-[360deg] transition-transform duration-700"
-        />
+        <span class="w-11 h-11 rounded-full overflow-hidden bg-white dark:bg-slate-800 inline-flex items-center justify-center flex-shrink-0">
+          <img
+            :src="siteConfig.avatarUrl"
+            :alt="siteConfig.authorName"
+            class="w-full h-full object-cover object-[54%_center] group-hover:rotate-[360deg] transition-transform duration-700"
+          />
+        </span>
         <span class="text-base font-black text-black/75 dark:text-white/75 tracking-wider">
           {{ siteConfig.navTitle }}
           <span class="text-(--primary)">{{ siteConfig.navSuffix }}</span>
@@ -39,8 +41,19 @@
         </RouterLink>
       </div>
 
-      <!-- Right: Settings + Theme toggle -->
+      <!-- Right: Search (when banner hidden) + Settings + Theme toggle -->
       <div class="flex items-center gap-1 flex-shrink-0">
+        <!-- Compact search bar when banner is hidden (wallpaperMode = transparent or solid) -->
+        <div v-if="bannerHidden" class="flex items-center">
+          <input
+            v-model="navSearchQuery"
+            @keydown.enter="onNavSearch"
+            type="text"
+            placeholder="搜索文章..."
+            class="w-28 lg:w-36 h-8 px-3 text-xs rounded-lg bg-white/80 dark:bg-slate-700/80 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-(--primary) transition-colors"
+          />
+        </div>
+
         <!-- Settings button -->
         <button
           id="settings-btn"
@@ -73,11 +86,13 @@
     <!-- Mobile Navbar -->
     <nav class="flex md:hidden items-center justify-between px-4 py-2.5">
       <RouterLink to="/" class="flex items-center gap-2 group">
-        <img
-          :src="siteConfig.avatarUrl"
-          :alt="siteConfig.authorName"
-          class="w-8 h-8 rounded-full object-cover shadow-md"
-        />
+        <span class="w-8 h-8 rounded-full overflow-hidden bg-white dark:bg-slate-800 inline-flex items-center justify-center flex-shrink-0">
+          <img
+            :src="siteConfig.avatarUrl"
+            :alt="siteConfig.authorName"
+            class="w-full h-full object-cover object-[54%_center]"
+          />
+        </span>
         <span class="text-sm font-black text-black/75 dark:text-white/75 tracking-wider">
           {{ siteConfig.navTitle }}
           <span class="text-(--primary)">{{ siteConfig.navSuffix }}</span>
@@ -86,6 +101,16 @@
       </RouterLink>
 
       <div class="flex items-center gap-1">
+        <!-- Mobile search when banner hidden -->
+        <div v-if="bannerHidden" class="flex items-center">
+          <input
+            v-model="navSearchQuery"
+            @keydown.enter="onNavSearch"
+            type="text"
+            placeholder="搜索..."
+            class="w-20 h-7 px-2 text-xs rounded-lg bg-white/80 dark:bg-slate-700/80 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-(--primary) transition-colors"
+          />
+        </div>
         <!-- Mobile Settings button (Mizuki-style: gear before theme toggle) -->
         <button
           @click.stop="isSettingsOpen = !isSettingsOpen"
@@ -182,6 +207,28 @@ const lastScrollY = ref(0)
 const isMobileMenuOpen = ref(false)
 const isSettingsOpen = ref(false)
 
+// ===== Navigation search (when banner hidden) =====
+const navSearchQuery = ref('')
+const bannerHidden = ref(false)
+
+function readWallpaperMode(): string {
+  const attr = document.documentElement.getAttribute('data-wallpaper-mode')
+  if (attr) return attr
+  return localStorage.getItem('theme.wallpaperMode') || 'solid'
+}
+
+function updateBannerHidden() {
+  const mode = readWallpaperMode()
+  bannerHidden.value = mode === 'transparent' || mode === 'solid'
+}
+
+function onNavSearch() {
+  const q = navSearchQuery.value.trim()
+  if (!q) return
+  // Navigate to home and let the browser handle the search
+  window.location.href = `${import.meta.env.BASE_URL || '/'}?s=${encodeURIComponent(q)}`
+}
+
 const navLinks = [
   { path: '/', label: '首页' },
   { path: '/projects', label: '项目' },
@@ -209,11 +256,27 @@ function toggleMobileMenu() {
   isMobileMenuOpen.value = !isMobileMenuOpen.value
 }
 
+let modeObserver: MutationObserver | null = null
+
 onMounted(() => {
   window.addEventListener('scroll', handleScroll, { passive: true })
+
+  // Initialize bannerHidden state
+  updateBannerHidden()
+
+  // Observe data-wallpaper-mode changes from SettingsPanel
+  modeObserver = new MutationObserver(() => {
+    updateBannerHidden()
+  })
+  modeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-wallpaper-mode'] })
+
+  // Also re-read on focus (for cross-tab changes)
+  window.addEventListener('focus', updateBannerHidden)
 })
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
+  if (modeObserver) modeObserver.disconnect()
+  window.removeEventListener('focus', updateBannerHidden)
 })
 </script>
 

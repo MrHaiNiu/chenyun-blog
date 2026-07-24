@@ -1,7 +1,8 @@
 <template>
   <div class="flex-1 flex flex-col">
+    <BannerSection />
     <main
-      class="w-full mx-auto px-3 sm:px-4 md:px-6 pt-20 md:pt-24 pb-32 relative z-10 flex-1"
+      class="w-full mx-auto px-3 sm:px-4 md:px-6 pt-4 pb-32 relative z-10 flex-1"
       :style="{ maxWidth: themeStore.layoutMode === 'full' ? '100%' : '80rem' }"
     >
       <!-- 3-column layout -->
@@ -207,6 +208,7 @@ import { fetchArchivesPosts } from '@/utils/markdown'
 import type { PostMeta } from '@/types'
 import { siteConfig } from '@/siteConfig'
 import { useThemeStore } from '@/stores/theme'
+import BannerSection from '@/components/BannerSection.vue'
 import BackButton from '@/components/BackButton.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import ProfileCard from '@/components/ProfileCard.vue'
@@ -251,7 +253,7 @@ onUnmounted(() => {
 })
 
 const selectedTag = ref('')
-const viewMode = ref<'timeline' | 'grid'>('timeline')
+const viewMode = ref<'timeline' | 'grid'>('grid')
 const sortAscending = ref(false)
 
 const tags = computed(() => {

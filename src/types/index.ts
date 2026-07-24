@@ -25,6 +25,8 @@ export interface Project {
   icon: string
   githubUrl: string
   tags: string[]
+  content?: string
+  slug?: string
 }
 
 export interface Photo {

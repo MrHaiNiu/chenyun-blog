@@ -1,5 +1,7 @@
 <template>
-  <main class="w-full max-w-6xl mx-auto px-3 sm:px-6 pt-20 md:pt-24 pb-32 relative z-10 flex-1">
+  <div class="flex-1 flex flex-col">
+    <BannerSection />
+    <main class="w-full max-w-6xl mx-auto px-3 sm:px-6 pt-4 pb-32 relative z-10 flex-1">
     <BackButton />
 
     <div class="mt-8">
@@ -79,14 +81,12 @@
             class="relative flex flex-row items-center w-full"
           >
             <div class="hidden md:block w-5/12 pr-4">
-              <a
+              <div
                 v-if="i % 2 === 0"
-                :href="project.githubUrl"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="group block rounded-2xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500"
+                class="rounded-2xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500"
               >
-                <div class="p-5">
+                <!-- Clickable body → project detail page -->
+                <div @click="goToProject(project)" class="group cursor-pointer p-5">
                   <div class="flex items-center gap-3 mb-3">
                     <span class="text-3xl">{{ project.icon }}</span>
                     <h3 class="text-base font-black text-slate-800 dark:text-white group-hover:text-accent transition-colors">{{ project.name }}</h3>
@@ -96,19 +96,30 @@
                     <span v-for="tag in project.tags" :key="tag" class="px-2 py-1 bg-accent-soft text-accent rounded-md text-xs font-bold">{{ tag }}</span>
                   </div>
                 </div>
-              </a>
+                <!-- GitHub link -->
+                <div class="px-5 pb-5">
+                  <a
+                    :href="project.githubUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    @click.stop
+                    class="inline-flex items-center gap-1.5 text-xs font-bold text-accent hover:translate-x-1 transition-transform"
+                  >
+                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    GitHub →
+                  </a>
+                </div>
+              </div>
             </div>
             <div class="z-20 flex items-center justify-center w-6 h-6 rounded-full bg-accent border-4 border-white dark:border-slate-900 shadow-lg shrink-0">
               <div class="w-2 h-2 rounded-full bg-white animate-pulse" />
             </div>
             <div class="w-full md:w-5/12 pl-4">
-              <a
-                :href="project.githubUrl"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="group block rounded-2xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500"
-              >
-                <div class="p-5">
+              <div class="rounded-2xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500">
+                <!-- Clickable body → project detail page -->
+                <div @click="goToProject(project)" class="group cursor-pointer p-5">
                   <div class="flex items-center gap-3 mb-3">
                     <span class="text-3xl">{{ project.icon }}</span>
                     <h3 class="text-base font-black text-slate-800 dark:text-white group-hover:text-accent transition-colors">{{ project.name }}</h3>
@@ -117,9 +128,23 @@
                   <div class="flex flex-wrap gap-1.5">
                     <span v-for="tag in project.tags" :key="tag" class="px-2 py-1 bg-accent-soft text-accent rounded-md text-xs font-bold">{{ tag }}</span>
                   </div>
-                  <span class="text-xs font-bold text-accent group-hover:translate-x-1 transition-transform inline-block mt-2">GitHub →</span>
                 </div>
-              </a>
+                <!-- GitHub link -->
+                <div class="px-5 pb-5">
+                  <a
+                    :href="project.githubUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    @click.stop
+                    class="inline-flex items-center gap-1.5 text-xs font-bold text-accent hover:translate-x-1 transition-transform"
+                  >
+                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    GitHub →
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -127,16 +152,14 @@
 
       <!-- Grid View -->
       <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-        <a
+        <div
           v-for="(project, i) in filteredProjects"
           :key="project.id"
-          :href="project.githubUrl"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="group rounded-3xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500 animate-fade-in-up"
+          class="rounded-3xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500 animate-fade-in-up"
           :style="{ animationDelay: `${i * 30}ms` }"
         >
-          <div class="p-5">
+          <!-- Clickable body → project detail page -->
+          <div @click="goToProject(project)" class="group cursor-pointer p-5">
             <div class="flex items-center gap-3 mb-3">
               <span class="text-3xl">{{ project.icon }}</span>
               <h3 class="text-base font-black text-slate-800 dark:text-white group-hover:text-accent dark:group-hover:text-accent-light transition-colors">
@@ -149,28 +172,59 @@
             <div class="flex flex-wrap gap-1.5 mb-2">
               <span v-for="tag in project.tags" :key="tag" class="px-2 py-1 bg-accent-soft text-accent dark:text-accent-light rounded-md text-xs font-bold">{{ tag }}</span>
             </div>
-            <span class="text-xs font-bold text-accent group-hover:translate-x-1 transition-transform inline-block">GitHub →</span>
           </div>
-        </a>
+          <!-- GitHub link -->
+          <div class="px-5 pb-5">
+            <a
+              :href="project.githubUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              @click.stop
+              class="inline-flex items-center gap-1.5 text-xs font-bold text-accent hover:translate-x-1 transition-transform"
+            >
+              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+              </svg>
+              GitHub →
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </main>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { projectsData } from '@/data/projects'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { fetchProjects } from '@/utils/markdown'
+import type { Project } from '@/types'
+import BannerSection from '@/components/BannerSection.vue'
 import BackButton from '@/components/BackButton.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import type { SearchResultItem } from '@/components/SearchBar.vue'
 
+const router = useRouter()
+
+const projectsData = ref<Project[]>([])
 const selectedTag = ref('')
 const viewMode = ref<'timeline' | 'grid'>('grid')
 const sortAscending = ref(false)
 
+/** 检查 projects 列表是否发生了变化（基于 id 列表） */
+function projectsHaveChanged(a: Project[], b: Project[]): boolean {
+  if (a.length !== b.length) return true
+  const idsA = a.map(p => p.id).sort().join(',')
+  const idsB = b.map(p => p.id).sort().join(',')
+  return idsA !== idsB
+}
+
+let pollTimer: ReturnType<typeof setInterval> | null = null
+
 const tags = computed(() => {
   const counts: Record<string, number> = {}
-  projectsData.forEach((p) => {
+  projectsData.value.forEach((p) => {
     p.tags.forEach((t) => {
       counts[t] = (counts[t] || 0) + 1
     })
@@ -181,9 +235,9 @@ const tags = computed(() => {
 })
 
 const filteredProjects = computed(() => {
-  let result = projectsData
+  let result = projectsData.value
   if (selectedTag.value) {
-    result = projectsData.filter((p) => p.tags.includes(selectedTag.value))
+    result = projectsData.value.filter((p) => p.tags.includes(selectedTag.value))
   }
   let sorted = [...result]
   if (sortAscending.value) {
@@ -194,7 +248,7 @@ const filteredProjects = computed(() => {
 
 function searchProjects(query: string): SearchResultItem[] {
   const q = query.toLowerCase()
-  return projectsData
+  return projectsData.value
     .filter(p =>
       p.name.toLowerCase().includes(q) ||
       p.description.toLowerCase().includes(q) ||
@@ -207,4 +261,24 @@ function searchProjects(query: string): SearchResultItem[] {
       bindings: { href: p.githubUrl, target: '_blank', rel: 'noopener noreferrer' },
     }))
 }
+
+function goToProject(project: Project) {
+  router.push(`/project/${project.slug}`)
+}
+
+onMounted(async () => {
+  projectsData.value = await fetchProjects()
+
+  // 每 3 秒轮询一次，检测 Projects 是否有新增/删除的文件
+  pollTimer = setInterval(async () => {
+    const fresh = await fetchProjects()
+    if (projectsHaveChanged(projectsData.value, fresh)) {
+      projectsData.value = fresh
+    }
+  }, 3000)
+})
+
+onUnmounted(() => {
+  if (pollTimer) clearInterval(pollTimer)
+})
 </script>
