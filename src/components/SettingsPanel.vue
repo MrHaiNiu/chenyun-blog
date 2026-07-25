@@ -432,7 +432,7 @@ function applyCardStyles() {
 }
 function resetCardStyle() {
   localCardBorderShadow.value = true
-  localCardFollowHue.value = true
+  localCardFollowHue.value = false
   applyCardStyles()
 }
 

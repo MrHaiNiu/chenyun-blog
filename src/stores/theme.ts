@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, watch, computed } from 'vue'
 
 export const useThemeStore = defineStore('theme', () => {
-  const isDark = ref(true)
+  const isDark = ref(false)
   const mounted = ref(false)
 
   // Theme color (hue 0-360)
@@ -29,7 +29,7 @@ export const useThemeStore = defineStore('theme', () => {
   function init() {
     mounted.value = true
     const savedTheme = localStorage.getItem('blog-theme')
-    isDark.value = savedTheme !== 'light'
+    isDark.value = savedTheme === 'dark'
 
     // Load saved settings
     const savedHue = localStorage.getItem('blog-hue')

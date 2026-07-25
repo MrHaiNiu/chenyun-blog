@@ -32,9 +32,9 @@
           localStorage.setItem('theme.primaryOverride', 'black');
         }
 
-        // 3. Dark mode (default dark)
+        // 3. Dark mode (default light)
         var savedTheme = localStorage.getItem('blog-theme');
-        if (savedTheme !== 'light') {
+        if (savedTheme === 'dark') {
           document.documentElement.classList.add('dark');
         }
 
