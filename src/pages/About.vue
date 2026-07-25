@@ -48,7 +48,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { renderMarkdown, parseFrontmatter, fetchAboutBio } from '@/utils/markdown'
+import { renderMarkdown } from '@/utils/markdown'
+import { parseFrontmatter, fetchAboutBio } from '@/utils/content-loader'
 import { siteConfig } from '@/siteConfig'
 import BackButton from '@/components/BackButton.vue'
 

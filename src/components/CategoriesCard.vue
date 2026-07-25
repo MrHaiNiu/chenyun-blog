@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { fetchArchivesPosts } from '@/utils/markdown'
+import { fetchArchivesPosts } from '@/utils/content-loader'
 import type { PostMeta } from '@/types'
 
 const posts = ref<PostMeta[]>([])

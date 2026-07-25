@@ -106,7 +106,8 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
-import { renderMarkdown, fetchProjectBySlug } from '@/utils/markdown'
+import { renderMarkdown } from '@/utils/markdown'
+import { fetchProjectBySlug } from '@/utils/content-loader'
 import type { Project, TocItem } from '@/types'
 import BackButton from '@/components/BackButton.vue'
 

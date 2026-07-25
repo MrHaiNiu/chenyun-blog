@@ -82,7 +82,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { siteConfig } from '@/siteConfig'
-import { fetchArchivesPosts } from '@/utils/markdown'
+import { fetchArchivesPosts } from '@/utils/content-loader'
 import type { PostMeta } from '@/types'
 
 const collapsed = ref(true)

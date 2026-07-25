@@ -63,7 +63,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { fetchArchivesPosts } from '@/utils/markdown'
+import { fetchArchivesPosts } from '@/utils/content-loader'
 import type { PostMeta, Album, Friend } from '@/types'
 import { useThemeStore } from '@/stores/theme'
 import ProfileCard from '@/components/ProfileCard.vue'

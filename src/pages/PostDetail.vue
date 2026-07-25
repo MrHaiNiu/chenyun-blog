@@ -144,7 +144,8 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
-import { renderMarkdown, fetchArchivePostBySlug, fetchArchivesPosts } from '@/utils/markdown'
+import { renderMarkdown } from '@/utils/markdown'
+import { fetchArchivePostBySlug, fetchArchivesPosts } from '@/utils/content-loader'
 import type { PostMeta, TocItem, Album, Friend } from '@/types'
 import { useToastStore } from '@/stores/toast'
 import BackButton from '@/components/BackButton.vue'

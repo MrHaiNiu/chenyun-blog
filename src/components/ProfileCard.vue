@@ -71,7 +71,7 @@ import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { siteConfig } from '@/siteConfig'
 import { useToastStore } from '@/stores/toast'
-import { fetchAboutBio } from '@/utils/markdown'
+import { fetchAboutBio } from '@/utils/content-loader'
 
 const props = defineProps<{
   postCount: number

@@ -198,7 +198,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { fetchProjects } from '@/utils/markdown'
+import { fetchProjects } from '@/utils/content-loader'
 import type { Project } from '@/types'
 import BannerSection from '@/components/BannerSection.vue'
 import BackButton from '@/components/BackButton.vue'
