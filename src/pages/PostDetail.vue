@@ -1,7 +1,37 @@
 <template>
   <div class="flex-1 flex flex-col">
     <main class="w-full max-w-7xl mx-auto px-3 sm:px-6 pt-16 pb-32 relative z-10 flex-1">
-      <div v-if="post" class="grid grid-cols-1 lg:grid-cols-[14rem_minmax(0,1fr)] gap-6 mt-6">
+      <!-- Loading Skeleton -->
+      <div v-if="loading" class="grid grid-cols-1 lg:grid-cols-[14rem_minmax(0,1fr)] gap-6 mt-6">
+        <aside class="hidden lg:block">
+          <div class="sticky top-24 flex flex-col gap-4">
+            <BackButton />
+            <div class="rounded-3xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5 animate-pulse">
+              <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-16 mb-4"></div>
+              <div class="space-y-2">
+                <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-24"></div>
+                <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-20"></div>
+                <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-28"></div>
+              </div>
+            </div>
+          </div>
+        </aside>
+        <div class="rounded-3xl bg-glass-50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl overflow-hidden animate-pulse">
+          <div class="p-6 md:p-10">
+            <div class="flex gap-2 mb-4">
+              <div class="h-5 bg-slate-200 dark:bg-slate-700 rounded w-14"></div>
+              <div class="h-5 bg-slate-200 dark:bg-slate-700 rounded w-10"></div>
+            </div>
+            <div class="h-8 bg-slate-200 dark:bg-slate-700 rounded w-3/4 mb-4"></div>
+            <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-full mb-2"></div>
+            <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-5/6 mb-2"></div>
+            <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-2/3"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Article Content -->
+      <div v-else-if="post" class="grid grid-cols-1 lg:grid-cols-[14rem_minmax(0,1fr)] gap-6 mt-6">
         <!-- Left Sidebar: BackButton + TOC + ProfileCard -->
         <aside class="hidden lg:block">
           <div class="sticky top-24 flex flex-col gap-4">
@@ -13,23 +43,35 @@
               <h3 class="text-sm font-black text-slate-900 dark:text-white mb-4 border-l-4 border-accent pl-2">
                 目录
               </h3>
-              <nav class="space-y-1.5">
+              <nav
+                ref="tocNav"
+                class="space-y-1.5 max-h-[calc(100vh-18rem)] overflow-y-auto pr-3"
+              >
                 <a
                   v-for="item in toc"
                   :key="item.id"
                   :href="`#${item.id}`"
+                  :data-toc-id="item.id"
                   :class="[
-                    'block text-sm transition-colors hover:text-accent',
-                    item.level === 1 ? 'font-bold text-slate-800 dark:text-slate-200' : '',
-                    item.level === 2 ? 'ml-3 text-slate-600 dark:text-slate-400' : '',
-                    item.level === 3 ? 'ml-6 text-xs text-slate-500 dark:text-slate-500' : '',
+                    'block text-sm transition-all duration-200 hover:text-accent rounded px-1 -mx-1',
+                    item.level === 1 ? 'font-bold' : '',
+                    item.level === 2 ? 'ml-3' : '',
+                    item.level === 3 ? 'ml-6 text-xs' : '',
+                    activeId === item.id
+                      ? 'text-accent font-bold bg-accent/10'
+                      : item.level === 1
+                        ? 'text-slate-800 dark:text-slate-200'
+                        : item.level === 2
+                          ? 'text-slate-600 dark:text-slate-400'
+                          : 'text-slate-500 dark:text-slate-500',
                   ]"
+                  @click="handleTocClick($event, item.id)"
                 >
                   {{ item.text }}
                 </a>
               </nav>
             </div>
-            <ProfileCard :post-count="0" :photo-count="0" :friend-count="0" />
+            <ProfileCard :post-count="posts.length" :photo-count="photoCount" :friend-count="friendsData.length" />
           </div>
         </aside>
 
@@ -100,10 +142,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
-import { renderMarkdown, fetchArchivePostBySlug } from '@/utils/markdown'
-import type { PostMeta, TocItem } from '@/types'
+import { renderMarkdown, fetchArchivePostBySlug, fetchArchivesPosts } from '@/utils/markdown'
+import type { PostMeta, TocItem, Album, Friend } from '@/types'
 import { useToastStore } from '@/stores/toast'
 import BackButton from '@/components/BackButton.vue'
 import ProfileCard from '@/components/ProfileCard.vue'
@@ -112,29 +154,103 @@ const route = useRoute()
 const toastStore = useToastStore()
 
 const post = ref<PostMeta | undefined>(undefined)
+const loading = ref(true)
 const htmlContent = ref('')
 const toc = ref<TocItem[]>([])
+const posts = ref<PostMeta[]>([])
+const albums = ref<Album[]>([])
+const friendsData = ref<Friend[]>([])
+const photoCount = computed(() => albums.value.reduce((sum, a) => sum + a.photos.length, 0))
+const activeId = ref('')
+const tocNav = ref<HTMLElement | null>(null)
+let scrollCleanup: (() => void) | null = null
+
+function handleTocClick(e: MouseEvent, id: string) {
+  e.preventDefault()
+  const target = document.getElementById(id)
+  if (target) {
+    const top = target.getBoundingClientRect().top + window.scrollY - 100
+    window.scrollTo({ top, behavior: 'smooth' })
+    history.replaceState(null, '', `#${id}`)
+    activeId.value = id
+  }
+}
+
+function updateActiveHeading() {
+  const headings = document.querySelectorAll('article h1, article h2, article h3')
+  if (!headings.length) return
+
+  let active = ''
+  const scrollY = window.scrollY + 100
+
+  for (const heading of headings) {
+    const top = heading.getBoundingClientRect().top + window.scrollY
+    if (top <= scrollY) {
+      active = heading.id
+    }
+  }
+
+  if (!active && headings.length > 0) {
+    active = headings[0].id
+  }
+
+  if (active !== activeId.value) {
+    activeId.value = active
+    scrollTocToActive()
+  }
+}
+
+function scrollTocToActive() {
+  if (!tocNav.value || !activeId.value) return
+  const activeLink = tocNav.value.querySelector(`[data-toc-id="${activeId.value}"]`) as HTMLElement | null
+  if (!activeLink) return
+
+  const navRect = tocNav.value.getBoundingClientRect()
+  const linkRect = activeLink.getBoundingClientRect()
+
+  if (linkRect.top < navRect.top || linkRect.bottom > navRect.bottom) {
+    activeLink.scrollIntoView({ block: 'center', behavior: 'smooth' })
+  }
+}
+
+/**
+ * Inject heading IDs directly into the HTML string before v-html renders it.
+ * This guarantees IDs are present in the DOM from the very first paint.
+ */
+function addHeadingIds(html: string): string {
+  return html.replace(
+    /<(h[1-3])(\s[^>]*)?>(.+?)<\/\1>/gi,
+    (_match, tag, attrs, content) => {
+      const text = content.replace(/<[^>]*>/g, '').trim()
+      const id = text
+        .toLowerCase()
+        .replace(/[^\p{L}\p{N}\s-]/gu, '')
+        .replace(/\s+/g, '-')
+      // Avoid duplicating an existing id attribute
+      if (/id=/i.test(attrs || '')) return _match
+      return `<${tag}${attrs || ''} id="${id}">${content}</${tag}>`
+    },
+  )
+}
 
 async function loadPost() {
+  loading.value = true
   const slug = route.params.slug as string
   post.value = (await fetchArchivePostBySlug(slug)) ?? undefined
 
   if (post.value?.content) {
     const result = await renderMarkdown(post.value.content)
-    htmlContent.value = result.html
     toc.value = result.toc
+    // Inject IDs into headings BEFORE rendering, so the DOM has them from the start
+    htmlContent.value = addHeadingIds(result.html)
 
     await nextTick()
-    // Add IDs to headings
-    document.querySelectorAll('article h1, article h2, article h3').forEach((heading, i) => {
-      const text = heading.textContent || ''
-      const id = text
-        .toLowerCase()
-        .replace(/[^\p{L}\p{N}\s-]/gu, '')
-        .replace(/\s+/g, '-')
-      heading.id = id
-    })
+    updateActiveHeading()
+    if (scrollCleanup) scrollCleanup()
+    window.addEventListener('scroll', updateActiveHeading, { passive: true })
+    scrollCleanup = () => window.removeEventListener('scroll', updateActiveHeading)
   }
+  loading.value = false
 }
 
 function copyLink() {
@@ -143,5 +259,48 @@ function copyLink() {
 }
 
 watch(() => route.params.slug, loadPost)
-onMounted(loadPost)
+
+async function loadSidebarData() {
+  // 异步加载文章总数、Albums 和 Friends 数据
+  const baseUrl = import.meta.env.BASE_URL || '/'
+  posts.value = await fetchArchivesPosts()
+  try {
+    const albumResp = await fetch(`${baseUrl}Gallery/albums.json?t=${Date.now()}`)
+    if (albumResp.ok) albums.value = await albumResp.json()
+  } catch (_e) { /* ignore */ }
+  try {
+    const friendResp = await fetch(`${baseUrl}Friends/friends.json?t=${Date.now()}`)
+    if (friendResp.ok) friendsData.value = await friendResp.json()
+  } catch (_e) { /* ignore */ }
+}
+
+onMounted(async () => {
+  await Promise.all([loadPost(), loadSidebarData()])
+})
+
+onBeforeUnmount(() => {
+  if (scrollCleanup) scrollCleanup()
+})
 </script>
+
+<style scoped>
+/* Custom thin scrollbar for TOC nav */
+nav.max-h-\[calc\(100vh-18rem\)\]::-webkit-scrollbar {
+  width: 4px;
+}
+nav.max-h-\[calc\(100vh-18rem\)\]::-webkit-scrollbar-track {
+  background: transparent;
+}
+nav.max-h-\[calc\(100vh-18rem\)\]::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 999px;
+}
+nav.max-h-\[calc\(100vh-18rem\)\]::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+/* Scroll margin for heading anchors */
+:deep(article h1, article h2, article h3) {
+  scroll-margin-top: 6rem;
+}
+</style>

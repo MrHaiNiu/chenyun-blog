@@ -78,7 +78,7 @@ export const siteConfig: SiteConfig = {
   friendLinkApplyFormat:
     '名称：宸云の宝藏之地\n简介：今天我也要学习吗\n链接：https://www.xinghuisama.top\n头像：http://47.95.204.9/logo.png',
   enableLevelSystem: true,
-  buildDate: '2026-03-23T00:00:00',
+  buildDate: '2026-07-23T20:30:00',
   danmakuList: [
     '欢迎来到宝藏之地！',
     '代码改变世界',

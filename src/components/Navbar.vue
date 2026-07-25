@@ -243,13 +243,7 @@ const navLinks = [
 const otherNavLinks = computed(() => navLinks.filter(l => l.path !== '/'))
 
 function handleScroll() {
-  const currentScrollY = window.scrollY
-  if (currentScrollY > lastScrollY.value && currentScrollY > 100) {
-    showNav.value = false
-  } else {
-    showNav.value = true
-  }
-  lastScrollY.value = currentScrollY
+  showNav.value = window.scrollY === 0
 }
 
 function toggleMobileMenu() {
@@ -260,6 +254,8 @@ let modeObserver: MutationObserver | null = null
 
 onMounted(() => {
   window.addEventListener('scroll', handleScroll, { passive: true })
+  // Sync initial state in case page loaded at non-zero scrollY
+  handleScroll()
 
   // Initialize bannerHidden state
   updateBannerHidden()

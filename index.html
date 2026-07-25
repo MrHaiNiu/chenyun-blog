@@ -7,9 +7,40 @@
     <title>宸云 の 宝藏之地</title>
     <script>
       try {
+        // Splash screen detection
         if (sessionStorage.getItem('hasSeenSplash') === 'true') {
           document.documentElement.classList.add('splash-seen');
         }
+
+        // Prevent theme color flash: set --hue, --primary, dark mode, card-follow-hue
+        // before the first paint, matching what Vue would initialize to.
+
+        // 1. Hue
+        var savedHue = localStorage.getItem('blog-hue');
+        if (savedHue) {
+          document.documentElement.style.setProperty('--hue', savedHue);
+        }
+
+        // 2. Primary color (default black for first visit)
+        var override = localStorage.getItem('theme.primaryOverride');
+        if (override === 'black') {
+          document.documentElement.style.setProperty('--primary', '#000000');
+        } else if (override === 'white') {
+          document.documentElement.style.setProperty('--primary', '#ffffff');
+        } else {
+          document.documentElement.style.setProperty('--primary', '#000000');
+          localStorage.setItem('theme.primaryOverride', 'black');
+        }
+
+        // 3. Dark mode (default dark)
+        var savedTheme = localStorage.getItem('blog-theme');
+        if (savedTheme !== 'light') {
+          document.documentElement.classList.add('dark');
+        }
+
+        // 4. Card follow hue defaults to off — clean up any stale 'true' from old default
+        document.documentElement.classList.remove('card-follow-hue');
+        localStorage.setItem('theme.cardFollowHue', 'false');
       } catch (e) {}
     </script>
     <style>

@@ -1,6 +1,8 @@
 <template>
+  <!-- Body already has --page-bg as background-color. Removing bg-page from this
+       container so that BackgroundSlider (z-[-10]) is not covered by a solid parent bg. -->
   <div
-    class="relative w-screen min-h-screen flex flex-col bg-page"
+    class="relative w-screen min-h-screen flex flex-col"
     style="transition: background-color 0.3s ease;"
   >
     <!-- Background layers -->

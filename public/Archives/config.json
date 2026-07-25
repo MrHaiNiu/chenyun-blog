@@ -1,16 +1,15 @@
 {
   "files": [
     {
-      "filename": "CLAUDE 中文.md",
-      "enabled": true,
-      "cover": ""
-    },
-    {
       "filename": "markdown-test.md",
       "enabled": true,
       "cover": ""
     },{
       "filename": "CLAUDE.md",
+      "enabled": true,
+      "cover": ""
+    },{
+      "filename": "Linux系统管理技术_学习笔记整理.md",
       "enabled": true,
       "cover": ""
     }

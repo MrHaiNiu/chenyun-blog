@@ -17,7 +17,7 @@
             <div class="flex justify-start">
                 <BackButton />
               </div>
-              <ProfileCard :post-count="posts.length" :photo-count="0" :friend-count="0" />
+              <ProfileCard :post-count="posts.length" :photo-count="photoCount" :friend-count="friendsData.length" />
             <GreetingCard />
             <CalendarWidget />
           </div>
@@ -205,7 +205,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { fetchArchivesPosts } from '@/utils/markdown'
-import type { PostMeta } from '@/types'
+import type { PostMeta, Album, Friend } from '@/types'
 import { siteConfig } from '@/siteConfig'
 import { useThemeStore } from '@/stores/theme'
 import BannerSection from '@/components/BannerSection.vue'
@@ -224,6 +224,9 @@ import type { SearchResultItem } from '@/components/SearchBar.vue'
 const themeStore = useThemeStore()
 const posts = ref<PostMeta[]>([])
 const loading = ref(true)
+const albums = ref<Album[]>([])
+const friendsData = ref<Friend[]>([])
+const photoCount = computed(() => albums.value.reduce((sum, a) => sum + a.photos.length, 0))
 
 /** 检查 posts 列表是否发生了变化（基于 slug 列表） */
 function postsHaveChanged(a: PostMeta[], b: PostMeta[]): boolean {
@@ -238,6 +241,17 @@ let pollTimer: ReturnType<typeof setInterval> | null = null
 onMounted(async () => {
   posts.value = await fetchArchivesPosts()
   loading.value = false
+
+  // 异步加载 Albums 和 Friends 数据
+  const baseUrl = import.meta.env.BASE_URL || '/'
+  try {
+    const albumResp = await fetch(`${baseUrl}Gallery/albums.json?t=${Date.now()}`)
+    if (albumResp.ok) albums.value = await albumResp.json()
+  } catch (_e) { /* ignore */ }
+  try {
+    const friendResp = await fetch(`${baseUrl}Friends/friends.json?t=${Date.now()}`)
+    if (friendResp.ok) friendsData.value = await friendResp.json()
+  } catch (_e) { /* ignore */ }
 
   // 每 3 秒轮询一次，检测 Archives 是否有新增/删除的文件
   pollTimer = setInterval(async () => {

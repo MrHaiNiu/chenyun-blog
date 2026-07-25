@@ -305,7 +305,7 @@ const activeTab = ref('appearance')
 const localHue = ref(DEFAULT_HUE)
 const localBannerHeight = ref(50)
 const localCardBorderShadow = ref(true)
-const localCardFollowHue = ref(true)
+const localCardFollowHue = ref(false)
 const localPrimaryOverride = ref<string | null>(null) // null | 'black' | 'white'
 
 // ---------- Wallpaper State ----------
@@ -348,7 +348,7 @@ function loadSettings() {
   localHue.value = themeStore.themeHue
   localBannerHeight.value = themeStore.bannerHeight
   localCardBorderShadow.value = loadBool('theme.cardBorderShadow', true)
-  localCardFollowHue.value = loadBool('theme.cardFollowHue', true)
+  localCardFollowHue.value = loadBool('theme.cardFollowHue', false)
   localWallpaperMode.value = loadStr('theme.wallpaperMode', 'solid') as any
   localWallpaperTitle.value = loadBool('theme.wallpaperTitle', true)
   localWallpaperCarousel.value = loadBool('theme.wallpaperCarousel', true)
@@ -493,10 +493,10 @@ function resetSakura() {
 
 // ---------- Reset All ----------
 function resetSettings() {
-  clearPrimaryOverride()
+  setPrimaryOverride('black')
   localHue.value = DEFAULT_HUE; applyHue()
   localBannerHeight.value = 50; themeStore.setBannerHeight(50)
-  localCardBorderShadow.value = true; localCardFollowHue.value = true; applyCardStyles()
+  localCardBorderShadow.value = true; localCardFollowHue.value = false; applyCardStyles()
   localWallpaperMode.value = 'solid'; saveStr('theme.wallpaperMode', 'solid'); document.documentElement.setAttribute('data-wallpaper-mode', 'solid')
   localWallpaperTitle.value = true; localWallpaperCarousel.value = true; localWallpaperRipple.value = true; localWallpaperGradient.value = true
   saveBool('theme.wallpaperTitle', true); saveBool('theme.wallpaperCarousel', true); saveBool('theme.wallpaperRipple', true); saveBool('theme.wallpaperGradient', true)
@@ -532,7 +532,7 @@ onMounted(() => {
   if (props.isOpen) loadSettings()
   // Apply card styles on mount
   document.documentElement.classList.toggle('enable-card-border', loadBool('theme.cardBorderShadow', true))
-  document.documentElement.classList.toggle('card-follow-hue', loadBool('theme.cardFollowHue', true))
+  document.documentElement.classList.toggle('card-follow-hue', loadBool('theme.cardFollowHue', false))
 })
 
 onUnmounted(() => {

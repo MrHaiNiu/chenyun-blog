@@ -135,10 +135,42 @@ export async function fetchArchivesPosts(): Promise<PostMeta[]> {
 
 /**
  * Fetch a single archive post by slug.
+ * Only fetches config.json + the target .md file, not all posts.
  */
 export async function fetchArchivePostBySlug(slug: string): Promise<PostMeta | null> {
-  const posts = await fetchArchivesPosts()
-  return posts.find((p) => p.slug === slug) || null
+  const cacheBust = () => `?t=${Date.now()}`
+  const baseUrl = import.meta.env.BASE_URL || '/'
+
+  let config: { files: Array<{ filename: string; enabled: boolean; cover: string }> }
+  try {
+    const resp = await fetch(`${baseUrl}Archives/config.json${cacheBust()}`)
+    if (!resp.ok) return null
+    config = await resp.json()
+  } catch {
+    return null
+  }
+
+  const targetEntry = config.files.find((f) => f.enabled && f.filename.replace(/\.md$/, '') === slug)
+  if (!targetEntry) return null
+
+  try {
+    const rawResp = await fetch(`${baseUrl}Archives/${encodeURIComponent(targetEntry.filename)}${cacheBust()}`)
+    if (!rawResp.ok) return null
+    const raw = await rawResp.text()
+    const { data, content } = parseFrontmatter(raw)
+    return {
+      slug,
+      title: data.title || '无标题',
+      date: data.date || '1970-01-01',
+      description: data.description || '',
+      tags: Array.isArray(data.tags) ? data.tags : [],
+      cover: targetEntry.cover || data.cover || '',
+      mood: data.mood || '',
+      content,
+    } as PostMeta
+  } catch {
+    return null
+  }
 }
 
 /**
