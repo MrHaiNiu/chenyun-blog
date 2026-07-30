@@ -190,7 +190,7 @@
         <aside v-if="themeStore.layoutMode === 'sidebar'" class="hidden xl:block">
           <div class="sticky top-24 flex flex-col gap-4">
             <DailyQuote />
-            <CategoriesCard />
+            <CategoriesCard @select="onCategorySelect" />
             <SiteInfoCard />
             <MusicPlayer />
           </div>
@@ -310,5 +310,12 @@ function searchPosts(query: string): SearchResultItem[] {
       tag: 'RouterLink',
       bindings: { to: `/posts/${p.slug}` },
     }))
+}
+
+function onCategorySelect(category: string) {
+  selectedTag.value = category
+  // 滚动到内容区顶部
+  const main = document.querySelector('main')
+  if (main) main.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 </script>

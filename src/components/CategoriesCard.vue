@@ -6,11 +6,11 @@
       分类
     </h4>
     <div class="space-y-1.5">
-      <RouterLink
+      <button
         v-for="cat in categories"
         :key="cat.name"
-        to="/timeline"
-        class="flex items-center justify-between px-3 py-2 rounded-xl transition-colors hover:bg-accent/10 dark:hover:bg-accent/10 group"
+        @click="emit('select', cat.name)"
+        class="flex items-center justify-between w-full px-3 py-2 rounded-xl transition-colors hover:bg-accent/10 dark:hover:bg-accent/10 group text-left"
       >
         <span class="text-sm font-bold text-slate-700 dark:text-slate-300 group-hover:text-accent transition-colors">
           {{ cat.name }}
@@ -20,7 +20,7 @@
         >
           {{ cat.count }}
         </span>
-      </RouterLink>
+      </button>
     </div>
     <div v-if="categories.length === 0" class="text-xs text-slate-400 text-center py-3">
       暂无分类
@@ -32,6 +32,10 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { fetchArchivesPosts } from '@/utils/content-loader'
 import type { PostMeta } from '@/types'
+
+const emit = defineEmits<{
+  (e: 'select', category: string): void
+}>()
 
 const posts = ref<PostMeta[]>([])
 

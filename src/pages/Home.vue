@@ -31,6 +31,18 @@
         <!-- Center Column -->
         <div class="flex flex-col gap-4 md:gap-5 min-w-0">
           <!-- Article list with pagination (moved up to top) -->
+          <!-- Filter indicator -->
+          <div v-if="selectedTag" class="flex items-center gap-2 px-4 py-2 rounded-2xl bg-accent/10 border border-accent/20">
+            <span class="text-sm text-slate-600 dark:text-slate-300">
+              筛选：<span class="font-bold text-accent">{{ selectedTag }}</span>
+            </span>
+            <button
+              @click="clearFilter"
+              class="ml-auto text-xs font-bold px-3 py-1 rounded-lg bg-accent text-white hover:bg-accent/80 transition-colors"
+            >
+              清除筛选
+            </button>
+          </div>
           <ArticleCardGrid :posts="paginatedPosts" :max-count="100" />
 
           <!-- Pagination -->
@@ -48,7 +60,7 @@
         <aside v-if="themeStore.layoutMode === 'sidebar'" class="hidden xl:block">
           <div class="sticky top-24 flex flex-col gap-4">
             <GreetingCard />
-            <CategoriesCard />
+            <CategoriesCard @select="onCategorySelect" />
             <SiteInfoCard />
             <MusicPlayer />
           </div>
@@ -85,17 +97,33 @@ const albums = ref<Album[]>([])
 const friendsData = ref<Friend[]>([])
 const photoCount = computed(() => albums.value.reduce((sum, a) => sum + a.photos.length, 0))
 
+const selectedTag = ref('')
+const filteredPosts = computed(() => {
+  if (!selectedTag.value) return posts.value
+  return posts.value.filter(p => p.tags.includes(selectedTag.value))
+})
+
 const POSTS_PER_PAGE = 4
 const currentPage = ref(1)
-const totalPages = computed(() => Math.max(1, Math.ceil(posts.value.length / POSTS_PER_PAGE)))
+const totalPages = computed(() => Math.max(1, Math.ceil(filteredPosts.value.length / POSTS_PER_PAGE)))
 const paginatedPosts = computed(() => {
   const start = (currentPage.value - 1) * POSTS_PER_PAGE
-  return posts.value.slice(start, start + POSTS_PER_PAGE)
+  return filteredPosts.value.slice(start, start + POSTS_PER_PAGE)
 })
 
 function onPageChange(page: number) {
   currentPage.value = page
   window.scrollTo({ top: 300, behavior: 'smooth' })
+}
+
+function onCategorySelect(category: string) {
+  selectedTag.value = category
+  currentPage.value = 1
+}
+
+function clearFilter() {
+  selectedTag.value = ''
+  currentPage.value = 1
 }
 
 function postsHaveChanged(a: PostMeta[], b: PostMeta[]): boolean {
