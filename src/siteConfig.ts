@@ -72,8 +72,8 @@ export const siteConfig: SiteConfig = {
     { name: '关于', href: '/about' },
   ],
   icpConfig: {
-    name: '萌ICP备 20260240号',
-    link: 'https://icp.gov.moe/?keyword=20260240',
+    name: '京ICP备2026046382号',
+    link: 'https://beian.miit.gov.cn/',
   },
   friendLinkApplyFormat:
     '名称：宸云の宝藏之地\n简介：今天我也要学习吗\n链接：https://www.xinghuisama.top\n头像：http://47.95.204.9/logo.png',
