@@ -3,7 +3,7 @@ title: "Markdown 测试"
 date: "2026-07-23 20:00:00"
 description: "用于减少大模型常见编码错误的行为规范，可按需与项目专属规则合并。"
 cover: "https://bu.dusays.com/2026/03/24/69c26fe4acdb5.jpg"
-tags: ["测试", "Markdown", "教程", "CLAUDE.MD"]
+tags: ["测试", "Markdown", "提示词", "CLAUDE"]
 
 
 ---

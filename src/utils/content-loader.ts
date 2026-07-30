@@ -1,7 +1,11 @@
 import type { PostMeta, TocItem, Project as ProjectMeta } from '@/types'
 
 // Simple frontmatter parser (browser-compatible, no Buffer dependency)
+// Handles both LF (\n) and CRLF (\r\n) line endings.
 export function parseFrontmatter(raw: string): { data: Record<string, any>; content: string } {
+  // Normalize CRLF → LF so all regexes work regardless of the source file's line endings
+  raw = raw.replace(/\r\n/g, '\n')
+
   const fmMatch = raw.match(/^---\n([\s\S]*?)\n---\n?/)
   if (!fmMatch) return { data: {}, content: raw }
 

@@ -1,7 +1,15 @@
 {
   "files": [
     {
-      "filename": "markdown-test.md",
+      "filename": "1两数之和.md",
+      "enabled": true,
+      "cover": ""
+    },{
+      "filename": "2两数相加.md",
+      "enabled": true,
+      "cover": ""
+    },{
+      "filename": "markdown-test .md",
       "enabled": true,
       "cover": ""
     },{
