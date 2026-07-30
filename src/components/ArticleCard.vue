@@ -48,7 +48,7 @@
         {{ post.description }}
       </p>
 
-      <!-- Stats (date + reading time) -->
+      <!-- Date -->
       <div class="stats flex items-center gap-3 mt-auto pt-2 text-xs text-slate-400 dark:text-slate-500">
         <span class="flex items-center gap-1">
           <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -58,13 +58,6 @@
             <line x1="3" y1="10" x2="21" y2="10" />
           </svg>
           <span class="font-bold">{{ formattedDate }}</span>
-        </span>
-        <span class="flex items-center gap-1">
-          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2" />
-            <circle cx="12" cy="12" r="10" />
-          </svg>
-          <span class="font-bold">{{ readingTime }} min</span>
         </span>
         <span class="flex-1 text-right text-accent group-hover:translate-x-1 transition-transform font-bold">
           阅读更多 →
@@ -119,10 +112,7 @@ const formattedDate = computed(() => {
   }
 })
 
-const readingTime = computed(() => {
-  const wordCount = (props.post.description || '').split(/\s+/).length
-  return Math.max(1, Math.ceil(wordCount / 200))
-})
+
 </script>
 
 <style scoped>
