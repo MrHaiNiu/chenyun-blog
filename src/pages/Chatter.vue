@@ -123,7 +123,7 @@ function parseFrontmatter(raw: string): { data: Record<string, string>; content:
 
 onMounted(async () => {
   try {
-    const cacheBust = `?t=${Date.now()}`
+    const cacheBust = `?v=${__BUILD_TIME__}`
     const baseUrl = import.meta.env.BASE_URL || '/'
     const resp = await fetch(`${baseUrl}Chatter/config.json${cacheBust}`)
     if (!resp.ok) { loading.value = false; return }

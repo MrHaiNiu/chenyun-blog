@@ -137,21 +137,25 @@ let pollTimer: ReturnType<typeof setInterval> | null = null
 
 onMounted(async () => {
   posts.value = await fetchArchivesPosts()
-  pollTimer = setInterval(async () => {
-    const fresh = await fetchArchivesPosts()
-    if (postsHaveChanged(posts.value, fresh)) {
-      posts.value = fresh
-    }
-  }, 3000)
+  // 文章热更新轮询只在开发环境启用（配合 scripts/watch-archives.mjs），
+  // 生产环境静态资源有缓存，轮询只会白白重复下载所有文章
+  if (import.meta.env.DEV) {
+    pollTimer = setInterval(async () => {
+      const fresh = await fetchArchivesPosts()
+      if (postsHaveChanged(posts.value, fresh)) {
+        posts.value = fresh
+      }
+    }, 3000)
+  }
 
   // 异步加载 Albums 和 Friends 数据
   const baseUrl = import.meta.env.BASE_URL || '/'
   try {
-    const albumResp = await fetch(`${baseUrl}Gallery/albums.json?t=${Date.now()}`)
+    const albumResp = await fetch(`${baseUrl}Gallery/albums.json?v=${__BUILD_TIME__}`)
     if (albumResp.ok) albums.value = await albumResp.json()
   } catch (_e) { /* ignore */ }
   try {
-    const friendResp = await fetch(`${baseUrl}Friends/friends.json?t=${Date.now()}`)
+    const friendResp = await fetch(`${baseUrl}Friends/friends.json?v=${__BUILD_TIME__}`)
     if (friendResp.ok) friendsData.value = await friendResp.json()
   } catch (_e) { /* ignore */ }
 })

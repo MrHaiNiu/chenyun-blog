@@ -55,7 +55,6 @@ import PageProgressBar from '@/components/PageProgressBar.vue'
 import FloatingButtons from '@/components/FloatingButtons.vue'
 import { useThemeStore } from '@/stores/theme'
 import { useToastStore } from '@/stores/toast'
-import '@vueuse/motion'
 
 const themeStore = useThemeStore()
 const toastStore = useToastStore()

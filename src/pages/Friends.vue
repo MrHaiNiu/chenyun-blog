@@ -75,7 +75,7 @@ const loading = ref(true)
 onMounted(async () => {
   try {
     const baseUrl = import.meta.env.BASE_URL || '/'
-    const resp = await fetch(`${baseUrl}Friends/friends.json?t=${Date.now()}`)
+    const resp = await fetch(`${baseUrl}Friends/friends.json?v=${__BUILD_TIME__}`)
     if (resp.ok) {
       friendsData.value = await resp.json()
     }

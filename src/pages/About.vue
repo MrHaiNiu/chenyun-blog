@@ -59,7 +59,7 @@ const bioText = ref(siteConfig.bio)
 
 onMounted(async () => {
   try {
-    const cacheBust = `?t=${Date.now()}`
+    const cacheBust = `?v=${__BUILD_TIME__}`
     const baseUrl = import.meta.env.BASE_URL || '/'
 
     // 读取 config.json 获取文件名

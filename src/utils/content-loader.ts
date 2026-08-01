@@ -78,7 +78,7 @@ export function getRecentPosts(_count: number = 5): PostMeta[] {
  * Reads config.json first, then fetches each enabled .md file.
  */
 export async function fetchArchivesPosts(): Promise<PostMeta[]> {
-  const cacheBust = () => `?t=${Date.now()}`
+  const cacheBust = () => `?v=${__BUILD_TIME__}`
   const baseUrl = import.meta.env.BASE_URL || '/'
 
   let config: { files: Array<{ filename: string; enabled: boolean; cover: string }> }
@@ -129,7 +129,7 @@ export async function fetchArchivesPosts(): Promise<PostMeta[]> {
  * Only fetches config.json + the target .md file, not all posts.
  */
 export async function fetchArchivePostBySlug(slug: string): Promise<PostMeta | null> {
-  const cacheBust = () => `?t=${Date.now()}`
+  const cacheBust = () => `?v=${__BUILD_TIME__}`
   const baseUrl = import.meta.env.BASE_URL || '/'
 
   let config: { files: Array<{ filename: string; enabled: boolean; cover: string }> }
@@ -171,13 +171,13 @@ export async function fetchAboutBio(): Promise<string> {
   const baseUrl = import.meta.env.BASE_URL || '/'
 
   try {
-    const cfgResp = await fetch(`${baseUrl}About/config.json?t=${Date.now()}`)
+    const cfgResp = await fetch(`${baseUrl}About/config.json?v=${__BUILD_TIME__}`)
     if (!cfgResp.ok) return ''
     const cfg = await cfgResp.json()
     const entry = cfg.files && cfg.files.find((f: any) => f.enabled)
     if (!entry || !entry.filename) return ''
 
-    const mdResp = await fetch(`${baseUrl}About/${encodeURIComponent(entry.filename)}?t=${Date.now()}`)
+    const mdResp = await fetch(`${baseUrl}About/${encodeURIComponent(entry.filename)}?v=${__BUILD_TIME__}`)
     if (!mdResp.ok) return ''
     const raw = await mdResp.text()
 
@@ -202,7 +202,7 @@ export interface ProjectConfigFile {
 }
 
 export async function fetchProjects(): Promise<ProjectMeta[]> {
-  const cacheBust = () => `?t=${Date.now()}`
+  const cacheBust = () => `?v=${__BUILD_TIME__}`
   const baseUrl = import.meta.env.BASE_URL || '/'
 
   let config: { files: ProjectConfigFile[] }

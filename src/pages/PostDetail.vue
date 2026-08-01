@@ -266,11 +266,11 @@ async function loadSidebarData() {
   const baseUrl = import.meta.env.BASE_URL || '/'
   posts.value = await fetchArchivesPosts()
   try {
-    const albumResp = await fetch(`${baseUrl}Gallery/albums.json?t=${Date.now()}`)
+    const albumResp = await fetch(`${baseUrl}Gallery/albums.json?v=${__BUILD_TIME__}`)
     if (albumResp.ok) albums.value = await albumResp.json()
   } catch (_e) { /* ignore */ }
   try {
-    const friendResp = await fetch(`${baseUrl}Friends/friends.json?t=${Date.now()}`)
+    const friendResp = await fetch(`${baseUrl}Friends/friends.json?v=${__BUILD_TIME__}`)
     if (friendResp.ok) friendsData.value = await friendResp.json()
   } catch (_e) { /* ignore */ }
 }

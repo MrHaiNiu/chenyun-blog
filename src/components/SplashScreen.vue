@@ -45,7 +45,7 @@ onMounted(() => {
     show.value = true
     setTimeout(() => {
       exitSplash()
-    }, 2200)
+    }, 900)
   } else {
     document.documentElement.classList.add('splash-seen')
   }
@@ -57,7 +57,7 @@ function exitSplash() {
     show.value = false
     sessionStorage.setItem('hasSeenSplash', 'true')
     document.documentElement.classList.add('splash-seen')
-  }, 600)
+  }, 300)
 }
 </script>
 
@@ -73,7 +73,7 @@ function exitSplash() {
 }
 
 .splash-progress {
-  animation: splashProgress 1.8s ease-in-out forwards;
+  animation: splashProgress 0.9s ease-in-out forwards;
 }
 
 @keyframes splashProgress {

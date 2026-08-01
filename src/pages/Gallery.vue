@@ -143,7 +143,7 @@ function searchAlbums(query: string): SearchResultItem[] {
 onMounted(async () => {
   try {
     const baseUrl = import.meta.env.BASE_URL || '/'
-    const resp = await fetch(`${baseUrl}Gallery/albums.json?t=${Date.now()}`)
+    const resp = await fetch(`${baseUrl}Gallery/albums.json?v=${__BUILD_TIME__}`)
     if (resp.ok) {
       albums.value = await resp.json()
     }
